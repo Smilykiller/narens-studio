@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { LayoutDashboard, Image as ImageIcon, Store, Users, Camera, Settings, LogOut, Calendar, CheckSquare, Layers } from "lucide-react";
+import { LayoutDashboard, Image as ImageIcon, Store, Users, Camera, Settings, LogOut, Calendar, CheckSquare, Layers, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Services", href: "/admin/services", icon: Sparkles },
   { name: "Clients", href: "/admin/clients", icon: Users },
   { name: "Bookings", href: "/admin/bookings", icon: Calendar },
   { name: "Resources", href: "/admin/resources", icon: Camera },
