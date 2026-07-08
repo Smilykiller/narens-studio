@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Zentry Hub — Engineering Blueprint V2 | Naren's Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --orange: #F47C20;
+    --orange-bright: #FF9A3C;
+    --orange-deep: #C45E10;
+    --orange-glow: rgba(244,124,32,0.18);
+    --dark-bg: #0E0E0F;
+    --dark-card: #161618;
+    --dark-card2: #1E1E21;
+    --dark-border: #2A2A2E;
+    --white: #F5F5F0;
+    --white-dim: #A8A8A0;
+    --white-faint: #3A3A3F;
+    --success: #3DDC84;
+    --info: #5BC4F5;
+    --warn: #F4C842;
+    --danger: #F45C5C;
+    --purple: #A78BFA;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark-bg);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(14,14,15,0.94);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 14px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .logo-mark { display: flex; align-items: center; gap: 12px; }
+  .logo-mark .ring {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 3px solid var(--orange);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif; font-size: 15px;
+    color: var(--orange); letter-spacing: 1px;
+  }
+  .logo-mark span { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 3px; color: var(--white); }
+  .logo-mark small { font-size: 10px; color: var(--white-dim); letter-spacing: 2px; display: block; line-height: 1; margin-top: 2px; }
+  nav { display: flex; gap: 6px; flex-wrap: wrap; }
+  nav a {
+    color: var(--white-dim); font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    text-decoration: none; padding: 6px 12px; border-radius: 4px; transition: all .2s;
+  }
+  nav a:hover { color: var(--orange); background: var(--orange-glow); }
+
+  .hero {
+    padding: 90px 40px 60px;
+    text-align: center;
+    background: radial-gradient(ellipse 80% 55% at 50% 0%, rgba(244,124,32,0.10) 0%, transparent 70%);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: 'ENGINEERING';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 16vw, 180px);
+    color: rgba(244,124,32,0.035);
+    white-space: nowrap; pointer-events: none; letter-spacing: 10px;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--orange-glow); border: 1px solid var(--orange);
+    color: var(--orange); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 16px; border-radius: 100px; margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px, 7vw, 80px);
+    letter-spacing: 4px; line-height: 1; color: var(--white);
+  }
+  .hero h1 span { color: var(--orange); }
+  .hero p { color: var(--white-dim); max-width: 620px; margin: 18px auto 0; font-size: 16px; }
+
+  section { padding: 70px 40px; max-width: 1240px; margin: 0 auto; }
+  hr.divider { border: none; border-top: 1px solid var(--dark-border); margin: 0; }
+  .section-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+  h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 50px); letter-spacing: 2px; color: var(--white); margin-bottom: 10px;
+  }
+  .section-desc { color: var(--white-dim); max-width: 720px; margin-bottom: 36px; }
+
+  .card {
+    background: var(--dark-card); border: 1px solid var(--dark-border);
+    border-radius: 12px; padding: 28px;
+  }
+  .card:hover { border-color: rgba(244,124,32,0.4); transition: border-color .3s; }
+  .card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--orange); margin-bottom: 10px; }
+  .card p { color: var(--white-dim); font-size: 14px; }
+
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+
+  /* CODE BLOCKS */
+  pre {
+    background: #0a0a0b;
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    padding: 22px;
+    overflow-x: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 16px 0;
+  }
+  .kw { color: #F47C20; }
+  .fn { color: #5BC4F5; }
+  .str { color: #3DDC84; }
+  .cm { color: #4A4A52; font-style: italic; }
+  .ty { color: #A78BFA; }
+  .num { color: #F4C842; }
+  .op { color: var(--white-dim); }
+
+  /* PIPELINE */
+  .pipeline { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+  .pipe-step {
+    background: var(--dark-card2); border: 1px solid var(--dark-border);
+    border-radius: 10px; padding: 16px 14px; min-width: 130px; text-align: center; flex-shrink: 0;
+  }
+  .pipe-step .icon { font-size: 24px; margin-bottom: 6px; }
+  .pipe-step .name { font-size: 12px; font-weight: 600; color: var(--white); }
+  .pipe-step .sub { font-size: 11px; color: var(--white-dim); margin-top: 3px; }
+  .pipe-arrow { color: var(--orange); font-size: 20px; display: flex; align-items: center; padding: 0 4px; flex-shrink: 0; }
+  .pipe-step.highlight { border-color: var(--orange); background: var(--orange-glow); }
+  .pipe-step.ws { border-color: var(--info); background: rgba(91,196,245,0.07); }
+  .pipe-step.safe { border-color: var(--success); background: rgba(61,220,132,0.07); }
+
+  /* DB SCHEMA */
+  .schema-group { margin-bottom: 36px; }
+  .schema-group h4 { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 2px; color: var(--orange); margin-bottom: 12px; }
+  .schema-table { width: 100%; border-collapse: collapse; background: var(--dark-card); border-radius: 10px; overflow: hidden; border: 1px solid var(--dark-border); margin-bottom: 12px; }
+  .schema-table th { background: var(--dark-card2); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); padding: 10px 14px; text-align: left; }
+  .schema-table td { padding: 10px 14px; border-top: 1px solid var(--dark-border); font-size: 13px; }
+  .col-name { font-family: 'DM Mono', monospace; color: var(--orange-bright); }
+  .col-type { font-family: 'DM Mono', monospace; color: var(--info); font-size: 12px; }
+  .col-note { color: var(--white-dim); font-size: 12px; }
+  .pk-badge { background: rgba(244,124,32,0.15); color: var(--orange); border: 1px solid rgba(244,124,32,0.3); font-size: 10px; padding: 1px 7px; border-radius: 4px; font-family: 'DM Mono', monospace; }
+  .fk-badge { background: rgba(91,196,245,0.1); color: var(--info); border: 1px solid rgba(91,196,245,0.3); font-size: 10px; padding: 1px 7px; border-radius: 4px; font-family: 'DM Mono', monospace; }
+  .idx-badge { background: rgba(61,220,132,0.1); color: var(--success); border: 1px solid rgba(61,220,132,0.3); font-size: 10px; padding: 1px 7px; border-radius: 4px; font-family: 'DM Mono', monospace; }
+  .uniq-badge { background: rgba(244,200,66,0.1); color: var(--warn); border: 1px solid rgba(244,200,66,0.3); font-size: 10px; padding: 1px 7px; border-radius: 4px; font-family: 'DM Mono', monospace; }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 10px; padding: 18px 22px; margin: 18px 0;
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: 14px;
+  }
+  .callout.orange { background: rgba(244,124,32,0.08); border: 1px solid rgba(244,124,32,0.25); }
+  .callout.blue { background: rgba(91,196,245,0.07); border: 1px solid rgba(91,196,245,0.25); }
+  .callout.green { background: rgba(61,220,132,0.07); border: 1px solid rgba(61,220,132,0.25); }
+  .callout.red { background: rgba(244,92,92,0.07); border: 1px solid rgba(244,92,92,0.25); }
+  .callout .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout .body strong { color: var(--white); display: block; margin-bottom: 4px; font-size: 13px; letter-spacing: 0.5px; }
+  .callout .body p { color: var(--white-dim); margin: 0; }
+
+  /* ARCH BOX */
+  .arch-box {
+    background: var(--dark-card); border: 1px solid var(--dark-border);
+    border-radius: 14px; padding: 32px;
+    margin-bottom: 24px;
+  }
+  .arch-box h4 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--white); margin-bottom: 16px; }
+
+  /* LAYER DIAGRAM */
+  .layer-stack { display: flex; flex-direction: column; gap: 8px; }
+  .layer {
+    border-radius: 8px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px; font-size: 14px;
+  }
+  .layer.l1 { background: rgba(244,124,32,0.10); border: 1px solid rgba(244,124,32,0.3); }
+  .layer.l2 { background: rgba(91,196,245,0.08); border: 1px solid rgba(91,196,245,0.25); }
+  .layer.l3 { background: rgba(61,220,132,0.07); border: 1px solid rgba(61,220,132,0.25); }
+  .layer.l4 { background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.25); }
+  .layer.l5 { background: rgba(244,200,66,0.07); border: 1px solid rgba(244,200,66,0.25); }
+  .layer .lname { font-weight: 600; color: var(--white); min-width: 180px; font-size: 13px; }
+  .layer .ldesc { color: var(--white-dim); font-size: 13px; }
+
+  /* STEP LIST */
+  .step-list { list-style: none; padding: 0; }
+  .step-list li {
+    display: flex; gap: 16px; padding: 14px 0;
+    border-bottom: 1px solid var(--dark-border);
+    font-size: 14px; align-items: flex-start;
+  }
+  .step-list li:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--orange); color: #000; font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  }
+  .step-body strong { color: var(--white); display: block; margin-bottom: 3px; }
+  .step-body span { color: var(--white-dim); }
+
+  /* PILL */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .pill {
+    background: var(--dark-card2); border: 1px solid var(--dark-border);
+    border-radius: 100px; padding: 5px 14px;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--white-dim);
+  }
+  .pill.orange { border-color: var(--orange); color: var(--orange); background: var(--orange-glow); }
+  .pill.green { border-color: var(--success); color: var(--success); background: rgba(61,220,132,0.08); }
+  .pill.blue { border-color: var(--info); color: var(--info); background: rgba(91,196,245,0.08); }
+  .pill.warn { border-color: var(--warn); color: var(--warn); background: rgba(244,200,66,0.08); }
+  .pill.red { border-color: var(--danger); color: var(--danger); background: rgba(244,92,92,0.08); }
+  .pill.purple { border-color: var(--purple); color: var(--purple); background: rgba(167,139,250,0.08); }
+
+  /* INLINE BADGE */
+  code {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    background: var(--dark-card2); border: 1px solid var(--dark-border);
+    border-radius: 4px; padding: 1px 6px; color: var(--orange-bright);
+  }
+
+  /* WS EVENT TABLE */
+  .event-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .event-table th { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--dark-border); }
+  .event-table td { padding: 10px 14px; border-bottom: 1px solid var(--dark-border); font-size: 13px; vertical-align: top; }
+  .event-table tr:last-child td { border-bottom: none; }
+  .event-table .ev { font-family: 'DM Mono', monospace; color: var(--orange-bright); }
+  .event-table .dir { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--info); }
+  .event-table .desc { color: var(--white-dim); }
+  .event-table .payload { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--success); }
+
+  /* ROUTE TABLE */
+  .route-table { width: 100%; border-collapse: collapse; }
+  .route-table th { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-dim); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--dark-border); }
+  .route-table td { padding: 10px 14px; border-bottom: 1px solid var(--dark-border); font-size: 13px; vertical-align: top; }
+  .route-table tr:last-child td { border-bottom: none; }
+
+  /* STATE MACHINE */
+  .state-machine { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 14px 0; }
+  .state-box {
+    border-radius: 8px; padding: 10px 18px; font-size: 13px; font-weight: 600;
+    border: 1px solid; text-align: center; min-width: 110px;
+  }
+  .state-box.s-pending { background: rgba(168,168,160,0.08); border-color: var(--white-faint); color: var(--white-dim); }
+  .state-box.s-live { background: rgba(61,220,132,0.10); border-color: var(--success); color: var(--success); }
+  .state-box.s-paused { background: rgba(244,200,66,0.10); border-color: var(--warn); color: var(--warn); }
+  .state-box.s-done { background: rgba(244,124,32,0.10); border-color: var(--orange); color: var(--orange); }
+  .state-box.s-error { background: rgba(244,92,92,0.10); border-color: var(--danger); color: var(--danger); }
+  .state-arr { color: var(--white-faint); font-size: 18px; }
+
+  footer {
+    border-top: 1px solid var(--dark-border);
+    padding: 40px; text-align: center;
+    color: var(--white-dim); font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    header { padding: 12px 20px; }
+    nav { display: none; }
+    section { padding: 50px 20px; }
+    .hero { padding: 70px 20px 50px; }
+    pre { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">
+    <div class="ring">NS</div>
+    <div>
+      <span>ZENTRY HUB</span>
+      <small>ENGINEERING BLUEPRINT · V2.0</small>
+    </div>
+  </div>
+  <nav>
+    <a href="#daemon">Daemon</a>
+    <a href="#watermark">Watermark</a>
+    <a href="#calendar">Calendar</a>
+    <a href="#schema">DB Schema</a>
+    <a href="#advanced">Advanced</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">TECHNICAL DEEP-DIVE · PRODUCTION-READY · V2.0</div>
+  <h1>NAREN'S <span>STUDIO</span><br/>ENGINEERING BLUEPRINT</h1>
+  <p>Architecture modifications, WebSocket pipelines, geofencing calendar logic, and a complete PostgreSQL DDL for the Zentry Hub platform.</p>
+</div>
+<hr class="divider"/>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 01 · LOCAL DAEMON ARCHITECTURE -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="daemon">
+  <div class="section-label">01 · Architecture Decoupling</div>
+  <h2>LOCAL CAMERA DAEMON — TETHERING ARCHITECTURE</h2>
+  <p class="section-desc">
+    Browsers cannot access the local filesystem directly (sandboxed by design). The solution is a lightweight
+    <strong>local Node.js daemon</strong> running natively on the studio workstation that bridges the camera hot-folder to your
+    cloud backend via a private authenticated WebSocket or HTTP tunnel. This is the only secure, reliable way to
+    achieve sub-second raw-file-to-client-screen delivery.
+  </p>
+
+  <div class="arch-box">
+    <h4>SYSTEM ARCHITECTURE — TWO PROCESSES, ONE PIPELINE</h4>
+    <div class="layer-stack">
+      <div class="layer l1">
+        <div class="lname">📷 Tethered Camera</div>
+        <div class="ldesc">Shoots RAW (CR3/ARW/NEF) → dumps to hot-folder via Capture One / DigiCamControl / native USB tether</div>
+      </div>
+      <div class="layer l2">
+        <div class="lname">🖥️ Studio Workstation Daemon</div>
+        <div class="ldesc">chokidar watches hot-folder · Sharp converts RAW→JPEG + watermark · pushes to Express API via authenticated HTTP POST or direct WS emit</div>
+      </div>
+      <div class="layer l3">
+        <div class="lname">☁️ Express / Node.js Backend (Render.com)</div>
+        <div class="ldesc">Receives processed JPEG bytes · uploads to Cloudflare R2 · writes DB record · emits <code>photo:new</code> to client Socket.io room</div>
+      </div>
+      <div class="layer l4">
+        <div class="lname">⚡ Socket.io Client Room</div>
+        <div class="ldesc">Client browser in the session room receives signed R2 URL in real-time · renders photo</div>
+      </div>
+      <div class="layer l5">
+        <div class="lname">💾 NAS / Local Archive</div>
+        <div class="ldesc">Post-session BullMQ archive job pulls originals from daemon local disk, transfers via SFTP/local move, marks is_archived=true</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout orange">
+    <div class="icon">⚠️</div>
+    <div class="body">
+      <strong>Why NOT an Electron App?</strong>
+      <p>Electron adds ~200MB binary overhead and complex auto-update pipelines. A plain Node.js daemon (installable via <code>npm i -g narens-daemon</code>) runs as a background service using <code>pm2</code> or <code>node-windows</code>/<code>launchd</code> — zero UI, zero overhead, fully scriptable, restartable on crash.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 12px">DAEMON BOOTSTRAP — INSTALL ONCE ON STUDIO MACHINE</h3>
+  <pre><span class="cm"># Install globally on studio workstation</span>
+<span class="fn">npm</span> install <span class="op">-g</span> pm2
+<span class="fn">npm</span> install chokidar sharp @aws-sdk/client-s3 axios dotenv socket.io-client
+
+<span class="cm"># .env on studio machine</span>
+<span class="kw">DAEMON_SECRET</span>=<span class="str">super_long_random_hex_64</span>   <span class="cm"># shared secret, never in git</span>
+<span class="kw">API_BASE</span>=<span class="str">https://api.narenstudio.in</span>
+<span class="kw">HOT_FOLDER</span>=<span class="str">C:\NarenStudio\HotFolder</span>    <span class="cm"># or /Users/naren/HotFolder on Mac</span>
+<span class="kw">NAS_ROOT</span>=<span class="str">\\NAS\sessions</span>              <span class="cm"># UNC path or /mnt/nas</span>
+<span class="kw">R2_ENDPOINT</span>=<span class="str">https://&lt;account&gt;.r2.cloudflarestorage.com</span>
+<span class="kw">R2_ACCESS_KEY</span>=<span class="str">...</span>
+<span class="kw">R2_SECRET_KEY</span>=<span class="str">...</span>
+<span class="kw">R2_BUCKET</span>=<span class="str">narens-live</span></pre>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 12px">DAEMON CORE — daemon/index.js</h3>
+  <pre><span class="kw">const</span> chokidar = <span class="fn">require</span>(<span class="str">'chokidar'</span>);
+<span class="kw">const</span> sharp    = <span class="fn">require</span>(<span class="str">'sharp'</span>);
+<span class="kw">const</span> axios    = <span class="fn">require</span>(<span class="str">'axios'</span>);
+<span class="kw">const</span> path     = <span class="fn">require</span>(<span class="str">'path'</span>);
+<span class="kw">const</span> fs       = <span class="fn">require</span>(<span class="str">'fs'</span>);
+<span class="kw">const</span> { S3Client, PutObjectCommand } = <span class="fn">require</span>(<span class="str">'@aws-sdk/client-s3'</span>);
+<span class="fn">require</span>(<span class="str">'dotenv'</span>).config();
+
+<span class="kw">const</span> r2 = <span class="kw">new</span> <span class="ty">S3Client</span>({
+  region: <span class="str">'auto'</span>,
+  endpoint: process.env.R2_ENDPOINT,
+  credentials: {
+    accessKeyId: process.env.R2_ACCESS_KEY,
+    secretAccessKey: process.env.R2_SECRET_KEY
+  }
+});
+
+<span class="cm">// Active session state — polled from backend every 5s</span>
+<span class="kw">let</span> activeSession = <span class="kw">null</span>;
+
+<span class="kw">async function</span> <span class="fn">pollActiveSession</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> { data } = <span class="kw">await</span> axios.get(<span class="str">`${process.env.API_BASE}/daemon/session`</span>, {
+      headers: { <span class="str">'x-daemon-secret'</span>: process.env.DAEMON_SECRET }
+    });
+    activeSession = data.session; <span class="cm">// null if no LIVE session</span>
+  } <span class="kw">catch</span> (e) { console.error(<span class="str">'Poll error'</span>, e.message); }
+}
+<span class="fn">setInterval</span>(pollActiveSession, <span class="num">5000</span>);
+<span class="fn">pollActiveSession</span>();
+
+<span class="cm">// Queue: prevents concurrent Sharp workers overwhelming the machine</span>
+<span class="kw">const</span> queue = [];
+<span class="kw">let</span> processing = <span class="kw">false</span>;
+
+<span class="kw">async function</span> <span class="fn">processNext</span>() {
+  <span class="kw">if</span> (processing || queue.length === <span class="num">0</span>) <span class="kw">return</span>;
+  processing = <span class="kw">true</span>;
+  <span class="kw">const</span> filePath = queue.shift();
+  <span class="kw">try</span> {
+    <span class="kw">await</span> <span class="fn">processFile</span>(filePath);
+  } <span class="kw">finally</span> {
+    processing = <span class="kw">false</span>;
+    <span class="fn">processNext</span>();
+  }
+}
+
+<span class="kw">async function</span> <span class="fn">processFile</span>(filePath) {
+  <span class="kw">if</span> (!activeSession || activeSession.status !== <span class="str">'LIVE'</span>) <span class="kw">return</span>;
+
+  <span class="kw">const</span> { sessionId, watermarkPath, watermarkPosition,
+           watermarkScale, compressionLevel } = activeSession;
+  <span class="kw">const</span> originalFilename = path.basename(filePath);
+  <span class="kw">const</span> outKey = <span class="str">`sessions/${sessionId}/${originalFilename.replace(/\.\w+$/, '')}.jpg`</span>;
+
+  <span class="cm">// Sharp pipeline: decode → resize → composite watermark → JPEG compress</span>
+  <span class="kw">let</span> pipeline = sharp(filePath, { failOnError: <span class="kw">false</span> })
+    .rotate() <span class="cm">// auto-orient from EXIF</span>
+    .resize({ width: <span class="num">2400</span>, withoutEnlargement: <span class="kw">true</span> })
+    .jpeg({ quality: <span class="fn">mapCompression</span>(compressionLevel), mozjpeg: <span class="kw">true</span> });
+
+  <span class="kw">if</span> (watermarkPath) {
+    <span class="kw">const</span> wm = <span class="kw">await</span> <span class="fn">buildWatermark</span>(watermarkPath, watermarkPosition, watermarkScale);
+    pipeline = pipeline.composite([{ input: wm, gravity: watermarkPosition }]);
+  }
+
+  <span class="kw">const</span> buffer = <span class="kw">await</span> pipeline.toBuffer();
+
+  <span class="kw">await</span> r2.send(<span class="kw">new</span> PutObjectCommand({
+    Bucket: process.env.R2_BUCKET, Key: outKey,
+    Body: buffer, ContentType: <span class="str">'image/jpeg'</span>
+  }));
+
+  <span class="kw">await</span> axios.post(<span class="str">`${process.env.API_BASE}/daemon/photo-ready`</span>, {
+    sessionId, originalFilename, r2Key: outKey
+  }, { headers: { <span class="str">'x-daemon-secret'</span>: process.env.DAEMON_SECRET } });
+}
+
+<span class="fn">chokidar</span>.watch(process.env.HOT_FOLDER, {
+  persistent: <span class="kw">true</span>, ignoreInitial: <span class="kw">true</span>,
+  awaitWriteFinish: { stabilityThreshold: <span class="num">1500</span>, pollInterval: <span class="num">300</span> }
+}).on(<span class="str">'add'</span>, (filePath) => {
+  <span class="kw">if</span> (/\.(cr3|arw|nef|cr2|raf|dng|jpg|jpeg)$/i.test(filePath)) {
+    queue.push(filePath);
+    <span class="fn">processNext</span>();
+  }
+});
+
+console.log(<span class="str">'🎞️  Naren\'s Studio daemon running — watching'</span>, process.env.HOT_FOLDER);</pre>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 12px">BACKEND DAEMON RECEIVER — Express Endpoint</h3>
+  <pre><span class="cm">// POST /daemon/photo-ready — internal only, guarded by daemon secret</span>
+router.post(<span class="str">'/photo-ready'</span>, <span class="fn">daemonAuth</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { sessionId, originalFilename, r2Key } = req.body;
+
+  <span class="kw">const</span> signedUrl = <span class="kw">await</span> <span class="fn">getR2SignedUrl</span>(r2Key, <span class="num">3600</span>); <span class="cm">// 1hr expiry</span>
+
+  <span class="cm">// Persist to DB</span>
+  <span class="kw">const</span> photo = <span class="kw">await</span> supabase.from(<span class="str">'photos'</span>).insert({
+    session_id: sessionId,
+    filename: originalFilename,
+    proxy_url: signedUrl,
+    r2_key: r2Key,
+    client_choice: <span class="str">'PENDING'</span>,
+    watermark_applied: <span class="kw">true</span>
+  }).select().single();
+
+  <span class="cm">// Push to all sockets in this session room</span>
+  io.to(<span class="str">`session:${sessionId}`</span>).emit(<span class="str">'photo:new'</span>, {
+    id: photo.data.id,
+    filename: originalFilename,
+    url: signedUrl
+  });
+
+  res.json({ ok: <span class="kw">true</span> });
+});</pre>
+
+  <div class="callout green">
+    <div class="icon">✅</div>
+    <div class="body">
+      <strong>Process Manager: pm2</strong>
+      <p><code>pm2 start daemon/index.js --name narens-daemon --watch false -- restart-delay=3000</code> — auto-restarts on crash, survives machine reboots with <code>pm2 startup</code>. Logs visible with <code>pm2 logs narens-daemon</code>.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider"/>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 02 · WATERMARK WEBSOCKET PIPELINE -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="watermark">
+  <div class="section-label">02 · Dynamic Watermark Engineering</div>
+  <h2>LIVE WATERMARK — WEBSOCKET EVENT PIPELINE</h2>
+  <p class="section-desc">
+    The security watermark in Engine B serves two entirely different functions that must be handled at two separate layers:
+    <strong>server-burned watermarks</strong> (permanent, in JPEG pixels — for file protection) and
+    <strong>client-side canvas overlays</strong> (CSS/Canvas DOM manipulation — for live admin adjustability without
+    re-processing). Understanding this split is the entire architecture insight.
+  </p>
+
+  <div class="grid-2" style="margin-bottom:28px">
+    <div class="card">
+      <h3>🔒 LAYER 1 — SERVER-BURNED (JPEG)</h3>
+      <p>Applied by Sharp during initial processing. Cannot be adjusted live. This is the <strong>fallback protection</strong> — even if the client screenshots or right-clicks, the underlying file is already watermarked. Opacity: ~15%. Position: center. Scale: 40% of image width.</p>
+      <div class="pill-row">
+        <span class="pill green">Permanent in pixels</span>
+        <span class="pill red">Not adjustable live</span>
+        <span class="pill blue">Defense against screen capture</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🎨 LAYER 2 — CLIENT CANVAS OVERLAY (DOM)</h3>
+      <p>A transparent <code>&lt;canvas&gt;</code> or <code>&lt;div&gt;</code> absolutely positioned over the <code>&lt;img&gt;</code> tag. Renders the studio logo/text via Canvas 2D API. Admin controls position, opacity, scale, and text <strong>live via WebSocket</strong> — no file reprocessing. Opacity: 40–70%.</p>
+      <div class="pill-row">
+        <span class="pill orange">Admin-adjustable live</span>
+        <span class="pill warn">DOM only — not in file</span>
+        <span class="pill purple">Zero server lag</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout blue">
+    <div class="icon">💡</div>
+    <div class="body">
+      <strong>The Core Security Insight</strong>
+      <p>The canvas overlay is purely visual presentation. The underlying JPEG already has the light server-burned watermark baked in. Even if a technically savvy user disables the canvas overlay via DevTools, they still get a watermarked JPEG. The canvas layer is for visible deterrence — its adjustability is a UX feature, not a security feature.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 16px">WEBSOCKET EVENT PIPELINE — FULL TRACE</h3>
+
+  <div style="overflow-x:auto;margin-bottom:24px">
+    <div class="pipeline">
+      <div class="pipe-step"><div class="icon">👨‍💼</div><div class="name">Admin Panel</div><div class="sub">Changes opacity slider or text</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step ws"><div class="icon">📡</div><div class="name">Emit WS Event</div><div class="sub">watermark:update → server</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step"><div class="icon">🔁</div><div class="name">Socket.io Server</div><div class="sub">Broadcasts to session room</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step ws"><div class="icon">📡</div><div class="name">All Clients Receive</div><div class="sub">watermark:config event</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step safe"><div class="icon">🖼️</div><div class="name">Canvas Re-render</div><div class="sub">requestAnimationFrame redraws overlay</div></div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step safe"><div class="icon">✅</div><div class="name">Instant Visual</div><div class="sub">&lt;2ms DOM repaint, zero server I/O</div></div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:24px 0 12px">WEBSOCKET EVENT SPECIFICATION</h3>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="event-table">
+      <tr>
+        <th>Event Name</th><th>Direction</th><th>Payload</th><th>Description</th>
+      </tr>
+      <tr>
+        <td class="ev">watermark:update</td>
+        <td class="dir">Admin→Server</td>
+        <td class="payload">{ opacity, scale, position, text, color }</td>
+        <td class="desc">Admin changes any watermark param</td>
+      </tr>
+      <tr>
+        <td class="ev">watermark:config</td>
+        <td class="dir">Server→All Clients</td>
+        <td class="payload">{ opacity, scale, position, text, color, sessionId }</td>
+        <td class="desc">Server broadcasts to session room</td>
+      </tr>
+      <tr>
+        <td class="ev">watermark:ack</td>
+        <td class="dir">Client→Server</td>
+        <td class="payload">{ clientId, ts }</td>
+        <td class="desc">Optional acknowledgement for latency logging</td>
+      </tr>
+      <tr>
+        <td class="ev">session:state</td>
+        <td class="dir">Server→All Clients</td>
+        <td class="payload">{ status: 'PAUSED'|'LIVE'|'COMPLETED' }</td>
+        <td class="desc">Session lifecycle changes</td>
+      </tr>
+      <tr>
+        <td class="ev">photo:new</td>
+        <td class="dir">Server→Clients</td>
+        <td class="payload">{ id, filename, url }</td>
+        <td class="desc">New photo added to selection room</td>
+      </tr>
+      <tr>
+        <td class="ev">selection:limit_update</td>
+        <td class="dir">Server→Clients</td>
+        <td class="payload">{ newLimit, sessionId }</td>
+        <td class="desc">Admin updates max selection count live</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 12px">CLIENT-SIDE CANVAS OVERLAY — React Component</h3>
+  <pre><span class="cm">// WatermarkCanvas.jsx — overlaid absolutely on top of each &lt;img&gt;</span>
+<span class="kw">import</span> { useEffect, useRef } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">export function</span> <span class="fn">WatermarkCanvas</span>({ config, imageRef }) {
+  <span class="kw">const</span> canvasRef = useRef(<span class="kw">null</span>);
+
+  useEffect(() => {
+    <span class="kw">const</span> canvas = canvasRef.current;
+    <span class="kw">const</span> img    = imageRef.current;
+    <span class="kw">if</span> (!canvas || !img) <span class="kw">return</span>;
+
+    <span class="kw">const</span> ctx = canvas.getContext(<span class="str">'2d'</span>);
+    canvas.width  = img.naturalWidth  || img.offsetWidth;
+    canvas.height = img.naturalHeight || img.offsetHeight;
+    ctx.clearRect(<span class="num">0</span>, <span class="num">0</span>, canvas.width, canvas.height);
+
+    <span class="kw">const</span> { opacity, scale, position, text, color } = config;
+    ctx.globalAlpha = opacity; <span class="cm">// 0.0 – 1.0</span>
+    ctx.fillStyle   = color || <span class="str">'rgba(255,255,255,0.85)'</span>;
+
+    <span class="kw">const</span> fontSize = Math.floor(canvas.width * scale * <span class="num">0.08</span>);
+    ctx.font        = <span class="str">`bold ${fontSize}px 'Bebas Neue', sans-serif`</span>;
+    ctx.textAlign   = <span class="str">'center'</span>;
+    ctx.textBaseline= <span class="str">'middle'</span>;
+
+    <span class="cm">// Diagonal tiled repeat — hardest to crop out</span>
+    ctx.save();
+    ctx.translate(canvas.width / <span class="num">2</span>, canvas.height / <span class="num">2</span>);
+    ctx.rotate(<span class="op">-</span>Math.PI / <span class="num">6</span>); <span class="cm">// -30°</span>
+    <span class="kw">const</span> cols = Math.ceil(canvas.width  / (fontSize * <span class="num">8</span>)) + <span class="num">2</span>;
+    <span class="kw">const</span> rows = Math.ceil(canvas.height / (fontSize * <span class="num">3</span>)) + <span class="num">2</span>;
+    <span class="kw">for</span> (<span class="kw">let</span> r = <span class="op">-</span>rows; r <= rows; r++) {
+      <span class="kw">for</span> (<span class="kw">let</span> c = <span class="op">-</span>cols; c <= cols; c++) {
+        ctx.fillText(text || <span class="str">'© NAREN\'S STUDIO'</span>,
+          c * fontSize * <span class="num">8</span>, r * fontSize * <span class="num">3</span>);
+      }
+    }
+    ctx.restore();
+  }, [config]);
+
+  <span class="kw">return</span> (
+    &lt;<span class="ty">canvas</span> ref={canvasRef}
+      style={{ position: <span class="str">'absolute'</span>, inset: <span class="num">0</span>, pointerEvents: <span class="str">'none'</span>,
+               width: <span class="str">'100%'</span>, height: <span class="str">'100%'</span> }} /&gt;
+  );
+}
+
+<span class="cm">// In SelectionRoom.jsx:</span>
+<span class="cm">// socket.on('watermark:config', (cfg) => setWatermarkConfig(cfg));</span>
+<span class="cm">// Wrap each &lt;img&gt; in &lt;div style={{position:'relative'}}&gt;&lt;img /&gt;&lt;WatermarkCanvas .../&gt;&lt;/div&gt;</span></pre>
+
+  <div class="callout green">
+    <div class="icon">✅</div>
+    <div class="body">
+      <strong>No Session Pause Required</strong>
+      <p>Because watermark updates only touch the DOM canvas layer (not the JPEG on disk), the admin can change opacity, scale, text, or position at any time without pausing the session. The server-side config in Redis/DB is also updated for new clients who join mid-session.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider"/>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 03 · MULTI-TEAM CALENDAR LOGIC -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="calendar">
+  <div class="section-label">03 · Multi-Team Calendar Logic</div>
+  <h2>RESOURCE ALLOCATION ENGINE — GEOFENCED CALENDAR</h2>
+  <p class="section-desc">
+    The key paradigm shift: individual staff and equipment kits are each treated as independent bookable
+    <strong>resources</strong> — not the studio as a monolith. Multiple bookings can coexist simultaneously
+    as long as different resources are assigned. Geofencing calculates transit impossibility automatically.
+  </p>
+
+  <div class="grid-2" style="margin-bottom:28px">
+    <div class="card">
+      <h3>🗂️ RESOURCE ENTITY MODEL</h3>
+      <p>Each bookable asset is a row in <code>studio_resources</code>:</p>
+      <div class="pill-row">
+        <span class="pill orange">PHOTOGRAPHER</span>
+        <span class="pill blue">VIDEOGRAPHER</span>
+        <span class="pill green">DRONE_OPERATOR</span>
+        <span class="pill warn">EQUIPMENT_KIT</span>
+        <span class="pill purple">VEHICLE</span>
+      </div>
+      <p style="margin-top:12px;color:var(--white-dim);font-size:14px">Each resource has its own booking calendar. Booking = start/end time + venue coordinates. Buffer windows are auto-inserted before and after each assignment.</p>
+    </div>
+    <div class="card">
+      <h3>🧮 FEASIBILITY ALGORITHM</h3>
+      <ul class="step-list" style="margin-top:4px">
+        <li><div class="step-num">1</div><div class="step-body"><strong>Parse venue coordinates</strong><span> from booking form (Google Places autocomplete → lat/lng)</span></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><strong>Calculate transit time</strong><span> via Google Maps Distance Matrix API (or Nominatim + OSRM for zero-cost fallback)</span></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><strong>Add 2hr buffer</strong><span> before (setup) and after (teardown) each assignment</span></div></li>
+        <li><div class="step-num">4</div><div class="step-body"><strong>Check resource calendar</strong><span> for any overlap in the buffered window</span></div></li>
+        <li><div class="step-num">5</div><div class="step-body"><strong>If conflict</strong><span>, flag with transit warning and offer alternative resources</span></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:0 0 12px">BOOKING CREATION ALGORITHM — Node.js Service</h3>
+  <pre><span class="cm">// services/bookingFeasibility.js</span>
+
+<span class="kw">const</span> SETUP_BUFFER_MS  = <span class="num">2</span> * <span class="num">60</span> * <span class="num">60</span> * <span class="num">1000</span>; <span class="cm">// 2 hours in ms</span>
+
+<span class="kw">async function</span> <span class="fn">checkResourceFeasibility</span>(resourceId, proposedStart, proposedEnd, venueCoords) {
+  <span class="cm">// 1. Fetch the most recent assignment for this resource before proposedStart</span>
+  <span class="kw">const</span> prevAssignment = <span class="kw">await</span> db.query(<span class="str">`
+    SELECT ra.*, b.venue_lat, b.venue_lng, b.event_end
+    FROM   resource_assignments ra
+    JOIN   bookings b ON b.id = ra.booking_id
+    WHERE  ra.resource_id = $1
+      AND  b.event_end + INTERVAL '2 hours' > $2::timestamptz
+      AND  b.event_start &lt; $3::timestamptz
+    ORDER  BY b.event_end DESC LIMIT 1
+  `</span>, [resourceId, proposedStart, proposedEnd]);
+
+  <span class="kw">if</span> (prevAssignment.rows.length === <span class="num">0</span>) <span class="kw">return</span> { feasible: <span class="kw">true</span> };
+
+  <span class="kw">const</span> prev = prevAssignment.rows[<span class="num">0</span>];
+  <span class="kw">const</span> prevEventEnd = <span class="kw">new</span> Date(prev.event_end);
+  <span class="kw">const</span> bufferEnd    = <span class="kw">new</span> Date(prevEventEnd.getTime() + SETUP_BUFFER_MS);
+
+  <span class="cm">// 2. Direct time overlap check (before even calling Maps API)</span>
+  <span class="kw">if</span> (bufferEnd > <span class="kw">new</span> Date(proposedStart)) {
+    <span class="cm">// 3. Fetch transit time between previous venue and new venue</span>
+    <span class="kw">const</span> transitSecs = <span class="kw">await</span> <span class="fn">getTransitTime</span>(
+      { lat: prev.venue_lat, lng: prev.venue_lng },
+      venueCoords
+    );
+    <span class="kw">const</span> earliestFeasibleStart = <span class="kw">new</span> Date(
+      prevEventEnd.getTime() + SETUP_BUFFER_MS + transitSecs * <span class="num">1000</span>
+    );
+
+    <span class="kw">if</span> (earliestFeasibleStart > <span class="kw">new</span> Date(proposedStart)) {
+      <span class="kw">return</span> {
+        feasible: <span class="kw">false</span>,
+        reason: <span class="str">'TRANSIT_IMPOSSIBLE'</span>,
+        details: {
+          prevVenue: { lat: prev.venue_lat, lng: prev.venue_lng },
+          newVenue: venueCoords,
+          transitMinutes: Math.ceil(transitSecs / <span class="num">60</span>),
+          bufferMinutes: <span class="num">120</span>,
+          earliestFeasibleStart: earliestFeasibleStart.toISOString(),
+          proposedStart
+        }
+      };
+    }
+  }
+  <span class="kw">return</span> { feasible: <span class="kw">true</span> };
+}
+
+<span class="cm">// OSRM fallback for zero-cost transit (no Maps API key needed)</span>
+<span class="kw">async function</span> <span class="fn">getTransitTime</span>(origin, dest) {
+  <span class="kw">const</span> url = <span class="str">`http://router.project-osrm.org/route/v1/driving/`</span>
+    + <span class="str">`${origin.lng},${origin.lat};${dest.lng},${dest.lat}?overview=false`</span>;
+  <span class="kw">const</span> { data } = <span class="kw">await</span> axios.get(url);
+  <span class="kw">return</span> data.routes[<span class="num">0</span>]?.duration ?? <span class="num">7200</span>; <span class="cm">// default 2hr if API fails</span>
+}</pre>
+
+  <h3 style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--white);margin:30px 0 12px">BOOKING CREATION FLOW WITH VETO OVERRIDE</h3>
+  <pre><span class="cm">// POST /api/bookings — Admin creates a booking with resource assignments</span>
+router.post(<span class="str">'/bookings'</span>, <span class="fn">adminAuth</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> {
+    clientId, packageId, venueAddress, venueCoords,
+    eventStart, eventEnd, resourceIds,
+    adminOverride = <span class="kw">false</span>,  <span class="cm">// explicit checkbox on frontend</span>
+    overrideReason = <span class="kw">null</span>
+  } = req.body;
+
+  <span class="kw">const</span> bufferStart = <span class="kw">new</span> Date(<span class="kw">new</span> Date(eventStart).getTime() - SETUP_BUFFER_MS);
+  <span class="kw">const</span> bufferEnd   = <span class="kw">new</span> Date(<span class="kw">new</span> Date(eventEnd).getTime()   + SETUP_BUFFER_MS);
+
+  <span class="kw">const</span> conflicts = [];
+  <span class="kw">for</span> (<span class="kw">const</span> resourceId <span class="kw">of</span> resourceIds) {
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="fn">checkResourceFeasibility</span>(
+      resourceId, eventStart, eventEnd, venueCoords
+    );
+    <span class="kw">if</span> (!result.feasible) conflicts.push({ resourceId, ...result });
+  }
+
+  <span class="kw">if</span> (conflicts.length > <span class="num">0</span> && !adminOverride) {
+    <span class="kw">return</span> res.status(<span class="num">409</span>).json({
+      error: <span class="str">'FEASIBILITY_CONFLICT'</span>,
+      conflicts,
+      message: <span class="str">'Set adminOverride=true with overrideReason to force booking'</span>
+    });
+  }
+
+  <span class="cm">// Insert booking with buffer columns + optional override audit trail</span>
+  <span class="kw">const</span> booking = <span class="kw">await</span> db.query(<span class="str">`
+    INSERT INTO bookings
+      (client_id, package_id, venue_address, venue_lat, venue_lng,
+       event_start, event_end, buffer_start_time, buffer_end_time,
+       admin_override, override_reason, override_by, override_at)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, NOW())
+    RETURNING *
+  `</span>, [clientId, packageId, venueAddress, venueCoords.lat, venueCoords.lng,
+       eventStart, eventEnd, bufferStart, bufferEnd,
+       adminOverride, overrideReason, req.user.id]);
+
+  <span class="kw">for</span> (<span class="kw">const</span> resourceId <span class="kw">of</span> resourceIds) {
+    <span class="kw">await</span> db.query(<span class="str">`
+      INSERT INTO resource_assignments (booking_id, resource_id, buffer_start, buffer_end)
+      VALUES ($1, $2, $3, $4)
+    `</span>, [booking.rows[<span class="num">0</span>].id, resourceId, bufferStart, bufferEnd]);
+  }
+
+  res.json({ booking: booking.rows[<span class="num">0</span>] });
+});</pre>
+
+  <div class="callout orange">
+    <div class="icon">🚨</div>
+    <div class="body">
+      <strong>Example: Tiruchendur→Coimbatore Conflict Warning</strong>
+      <p>Tiruchendur to Coimbatore is ~580 km / ~8.5 hrs drive. If the morning event ends at 14:00 and the evening session starts at 18:00, the system computes: <code>earliestFeasibleStart = 14:00 + 2hr buffer + 8.5hr transit = 00:30 next day</code>. This is after 18:00, so a TRANSIT_IMPOSSIBLE conflict fires. The UI shows a modal with the exact route data, transit time, and requires an admin confirmation checkbox + typed justification before the override is saved to the audit log.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider"/>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 04 · FULL DATABASE SCHEMA -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="schema">
+  <div class="section-label">04 · PostgreSQL DDL</div>
+  <h2>COMPLETE DATABASE SCHEMA — PRODUCTION DDL</h2>
+  <p class="section-desc">
+    Drop this into your Supabase SQL editor as a migration file. All tables use UUID PKs, TIMESTAMPTZ, JSONB for unstructured blobs, full foreign key constraints, and targeted indexes for query performance. Row Level Security policies are declared at the end.
+  </p>
+
+  <pre><span class="cm">-- ============================================================
+-- NAREN'S STUDIO · ZENTRY HUB — PRODUCTION SCHEMA
+-- Version: 2.0 | Supabase / PostgreSQL 15+
+-- Run as: supabase/migrations/001_init.sql
+-- ============================================================</span>
+
+<span class="cm">-- Enable UUID generation</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="str">"uuid-ossp"</span>;
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> <span class="str">"pg_trgm"</span>; <span class="cm">-- for text search</span>
+
+<span class="cm">-- ───────────────────────────────────────────
+-- ENUMS
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TYPE</span> user_role          <span class="kw">AS ENUM</span> (<span class="str">'ADMIN'</span>, <span class="str">'CLIENT'</span>);
+<span class="kw">CREATE TYPE</span> preferred_lang     <span class="kw">AS ENUM</span> (<span class="str">'en'</span>, <span class="str">'ta'</span>, <span class="str">'hi'</span>);
+<span class="kw">CREATE TYPE</span> session_status     <span class="kw">AS ENUM</span> (<span class="str">'PENDING'</span>, <span class="str">'LIVE'</span>, <span class="str">'PAUSED'</span>, <span class="str">'COMPLETED'</span>);
+<span class="kw">CREATE TYPE</span> gallery_status     <span class="kw">AS ENUM</span> (<span class="str">'DRAFT'</span>, <span class="str">'ACTIVE'</span>, <span class="str">'EXPIRED'</span>, <span class="str">'ARCHIVED'</span>);
+<span class="kw">CREATE TYPE</span> client_choice      <span class="kw">AS ENUM</span> (<span class="str">'PENDING'</span>, <span class="str">'SELECTED'</span>, <span class="str">'WAITLIST'</span>, <span class="str">'TRASH'</span>);
+<span class="kw">CREATE TYPE</span> payment_method     <span class="kw">AS ENUM</span> (<span class="str">'RAZORPAY'</span>, <span class="str">'UPI'</span>, <span class="str">'CASH'</span>, <span class="str">'PENDING'</span>);
+<span class="kw">CREATE TYPE</span> payment_status     <span class="kw">AS ENUM</span> (<span class="str">'UNPAID'</span>, <span class="str">'PAID'</span>, <span class="str">'REFUNDED'</span>);
+<span class="kw">CREATE TYPE</span> production_status  <span class="kw">AS ENUM</span> (<span class="str">'NEW'</span>, <span class="str">'IN_PRODUCTION'</span>, <span class="str">'READY'</span>, <span class="str">'DELIVERED'</span>);
+<span class="kw">CREATE TYPE</span> product_category   <span class="kw">AS ENUM</span> (<span class="str">'RESIN'</span>, <span class="str">'MATTE_GLASS'</span>, <span class="str">'LED'</span>, <span class="str">'CANVAS'</span>, <span class="str">'ACRYLIC'</span>);
+<span class="kw">CREATE TYPE</span> resource_type      <span class="kw">AS ENUM</span> (<span class="str">'PHOTOGRAPHER'</span>, <span class="str">'VIDEOGRAPHER'</span>, <span class="str">'DRONE_OPERATOR'</span>, <span class="str">'EQUIPMENT_KIT'</span>, <span class="str">'VEHICLE'</span>);
+<span class="kw">CREATE TYPE</span> backup_vault_status <span class="kw">AS ENUM</span> (<span class="str">'UNVERIFIED'</span>, <span class="str">'VAULTED'</span>, <span class="str">'MISSING'</span>);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: users
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> users (
+  id               <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  auth_uid         <span class="ty">UUID</span>            <span class="kw">UNIQUE</span>,      <span class="cm">-- Supabase Auth user.id</span>
+  role             user_role        <span class="kw">NOT NULL DEFAULT</span> <span class="str">'CLIENT'</span>,
+  full_name        <span class="ty">VARCHAR(120)</span>    <span class="kw">NOT NULL</span>,
+  email            <span class="ty">VARCHAR(255)</span>    <span class="kw">NOT NULL UNIQUE</span>,
+  phone            <span class="ty">VARCHAR(20)</span>,
+  preferred_lang   preferred_lang   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'en'</span>,
+  is_active        <span class="ty">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT TRUE</span>,
+  created_by       <span class="ty">UUID</span>            <span class="kw">REFERENCES</span> users(id) <span class="kw">ON DELETE SET NULL</span>,
+  created_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_users_email  <span class="kw">ON</span> users(email);
+<span class="kw">CREATE INDEX</span> idx_users_role   <span class="kw">ON</span> users(role);
+<span class="kw">CREATE INDEX</span> idx_users_phone  <span class="kw">ON</span> users(phone);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: studio_resources (staff + equipment)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> studio_resources (
+  id               <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  name             <span class="ty">VARCHAR(100)</span>    <span class="kw">NOT NULL</span>,         <span class="cm">-- "Karthik (Photographer)"</span>
+  resource_type    resource_type   <span class="kw">NOT NULL</span>,
+  user_id          <span class="ty">UUID</span>            <span class="kw">REFERENCES</span> users(id) <span class="kw">ON DELETE SET NULL</span>, <span class="cm">-- if staff</span>
+  phone            <span class="ty">VARCHAR(20)</span>,                       <span class="cm">-- for WA notifications</span>
+  color_hex        <span class="ty">VARCHAR(7)</span>,                        <span class="cm">-- calendar display color</span>
+  is_active        <span class="ty">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT TRUE</span>,
+  metadata         <span class="ty">JSONB</span>           <span class="kw">NOT NULL DEFAULT</span> <span class="str">'{}'</span>, <span class="cm">-- drone specs, kit contents, etc.</span>
+  created_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_resources_type <span class="kw">ON</span> studio_resources(resource_type);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: equipment_kits (granular gear tracking)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> equipment_kits (
+  id               <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  resource_id      <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> studio_resources(id) <span class="kw">ON DELETE CASCADE</span>,
+  item_name        <span class="ty">VARCHAR(120)</span>    <span class="kw">NOT NULL</span>,   <span class="cm">-- "Sony A7IV Body", "DJI Air 3"</span>
+  serial_number    <span class="ty">VARCHAR(80)</span>     <span class="kw">UNIQUE</span>,
+  purchase_date    <span class="ty">DATE</span>,
+  notes            <span class="ty">TEXT</span>,
+  created_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: packages (service packages)
+-- price_hidden_on_public: CRITICAL — hides price on /services page
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> packages (
+  id                    <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  name                  <span class="ty">VARCHAR(80)</span>     <span class="kw">NOT NULL</span>,
+  description           <span class="ty">TEXT</span>,
+  max_selections        <span class="ty">INT</span>             <span class="kw">NOT NULL DEFAULT</span> <span class="num">50</span>,
+  validity_days         <span class="ty">INT</span>             <span class="kw">NOT NULL DEFAULT</span> <span class="num">30</span>,
+  price                 <span class="ty">DECIMAL(10,2)</span>   <span class="kw">NOT NULL</span>,
+  price_hidden_on_public <span class="ty">BOOLEAN</span>        <span class="kw">NOT NULL DEFAULT TRUE</span>,  <span class="cm">-- PUBLIC page hides price</span>
+  display_order         <span class="ty">SMALLINT</span>        <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  is_active             <span class="ty">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT TRUE</span>,
+  upsell_per_extra      <span class="ty">DECIMAL(8,2)</span>,   <span class="cm">-- price per extra photo unlock (upsell feature)</span>
+  upsell_batch_price    <span class="ty">DECIMAL(8,2)</span>,   <span class="cm">-- price to unlock entire waitlist batch</span>
+  created_at            <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at            <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">COMMENT ON COLUMN</span> packages.price_hidden_on_public <span class="kw">IS</span>
+  <span class="str">'When TRUE, the /services public page renders the package without price. Price is revealed only on the checkout screen.'</span>;
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: bookings (event bookings with geofencing)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> bookings (
+  id                 <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  client_id          <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> users(id),
+  package_id         <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> packages(id),
+  venue_address      <span class="ty">TEXT</span>            <span class="kw">NOT NULL</span>,
+  venue_lat          <span class="ty">DECIMAL(10,7)</span>   <span class="kw">NOT NULL</span>,
+  venue_lng          <span class="ty">DECIMAL(10,7)</span>   <span class="kw">NOT NULL</span>,
+  event_start        <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL</span>,
+  event_end          <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL</span>,
+  buffer_start_time  <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL</span>,  <span class="cm">-- event_start - 2hr setup</span>
+  buffer_end_time    <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL</span>,  <span class="cm">-- event_end + 2hr teardown</span>
+  admin_override     <span class="ty">BOOLEAN</span>         <span class="kw">NOT NULL DEFAULT FALSE</span>,
+  override_reason    <span class="ty">TEXT</span>,           <span class="cm">-- mandatory when admin_override=true</span>
+  override_by        <span class="ty">UUID</span>            <span class="kw">REFERENCES</span> users(id),
+  override_at        <span class="ty">TIMESTAMPTZ</span>,
+  transit_warnings   <span class="ty">JSONB</span>           <span class="kw">NOT NULL DEFAULT</span> <span class="str">'[]'</span>, <span class="cm">-- archived conflict data</span>
+  notes              <span class="ty">TEXT</span>,
+  created_by         <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> users(id),
+  created_at         <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  <span class="kw">CONSTRAINT</span> chk_event_order  <span class="kw">CHECK</span> (event_end > event_start),
+  <span class="kw">CONSTRAINT</span> chk_buffer_order <span class="kw">CHECK</span> (buffer_end_time > buffer_start_time),
+  <span class="kw">CONSTRAINT</span> chk_override_reason <span class="kw">CHECK</span> (
+    admin_override = FALSE OR (admin_override = TRUE AND override_reason IS NOT NULL)
+  )
+);
+<span class="kw">CREATE INDEX</span> idx_bookings_client      <span class="kw">ON</span> bookings(client_id);
+<span class="kw">CREATE INDEX</span> idx_bookings_event_start  <span class="kw">ON</span> bookings(event_start);
+<span class="kw">CREATE INDEX</span> idx_bookings_buffer_range <span class="kw">ON</span> bookings(buffer_start_time, buffer_end_time);
+<span class="kw">CREATE INDEX</span> idx_bookings_venue_geo    <span class="kw">ON</span> bookings(venue_lat, venue_lng);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: resource_assignments (booking ↔ resource mapping)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> resource_assignments (
+  id             <span class="ty">UUID</span>         <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  booking_id     <span class="ty">UUID</span>         <span class="kw">NOT NULL REFERENCES</span> bookings(id) <span class="kw">ON DELETE CASCADE</span>,
+  resource_id    <span class="ty">UUID</span>         <span class="kw">NOT NULL REFERENCES</span> studio_resources(id),
+  buffer_start   <span class="ty">TIMESTAMPTZ</span>  <span class="kw">NOT NULL</span>,
+  buffer_end     <span class="ty">TIMESTAMPTZ</span>  <span class="kw">NOT NULL</span>,
+  <span class="kw">UNIQUE</span>(booking_id, resource_id)
+);
+<span class="kw">CREATE INDEX</span> idx_assignments_resource <span class="kw">ON</span> resource_assignments(resource_id);
+<span class="kw">CREATE INDEX</span> idx_assignments_buffer   <span class="kw">ON</span> resource_assignments(resource_id, buffer_start, buffer_end);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: galleries
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> galleries (
+  id               <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  client_id        <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> users(id),
+  booking_id       <span class="ty">UUID</span>            <span class="kw">REFERENCES</span> bookings(id),
+  package_id       <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> packages(id),
+  status           gallery_status   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'DRAFT'</span>,
+  expires_at       <span class="ty">TIMESTAMPTZ</span>,
+  nas_folder_path  <span class="ty">TEXT</span>,            <span class="cm">-- local NAS path post-archive</span>
+  created_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at       <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_galleries_client  <span class="kw">ON</span> galleries(client_id);
+<span class="kw">CREATE INDEX</span> idx_galleries_status  <span class="kw">ON</span> galleries(status);
+<span class="kw">CREATE INDEX</span> idx_galleries_expires <span class="kw">ON</span> galleries(expires_at);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: live_sessions (Engine A + B)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> live_sessions (
+  id                   <span class="ty">UUID</span>           <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  gallery_id           <span class="ty">UUID</span>           <span class="kw">NOT NULL REFERENCES</span> galleries(id),
+  status               session_status  <span class="kw">NOT NULL DEFAULT</span> <span class="str">'PENDING'</span>,
+  qr_auth_token        <span class="ty">TEXT</span>,           <span class="cm">-- short-lived JWT; nulled on COMPLETED</span>
+  qr_expires_at        <span class="ty">TIMESTAMPTZ</span>,
+  selection_limit      <span class="ty">INT</span>            <span class="kw">NOT NULL DEFAULT</span> <span class="num">50</span>,  <span class="cm">-- editable live</span>
+  compression_level    <span class="ty">SMALLINT</span>       <span class="kw">NOT NULL DEFAULT</span> <span class="num">7</span> <span class="kw">CHECK</span>(compression_level <span class="kw">BETWEEN</span> <span class="num">1</span> <span class="kw">AND</span> <span class="num">10</span>),
+  watermark_config     <span class="ty">JSONB</span>          <span class="kw">NOT NULL DEFAULT</span> <span class="str">'{"opacity":0.45,"scale":1,"position":"center","text":"© NAREN'\''S STUDIO","color":"rgba(255,255,255,0.85)"}'</span>,
+  watermark_server_config <span class="ty">JSONB</span>       <span class="kw">NOT NULL DEFAULT</span> <span class="str">'{"opacity":0.15,"scale":0.4,"position":"center"}'</span>,
+  logo_position        <span class="ty">VARCHAR(20)</span>    <span class="kw">NOT NULL DEFAULT</span> <span class="str">'south'</span>,  <span class="cm">-- sharp gravity</span>
+  logo_scale           <span class="ty">DECIMAL(4,2)</span>   <span class="kw">NOT NULL DEFAULT</span> <span class="num">0.15</span>,
+  is_selection_room    <span class="ty">BOOLEAN</span>        <span class="kw">NOT NULL DEFAULT FALSE</span>,  <span class="cm">-- Engine A vs B</span>
+  started_at           <span class="ty">TIMESTAMPTZ</span>,
+  ended_at             <span class="ty">TIMESTAMPTZ</span>,
+  created_by           <span class="ty">UUID</span>           <span class="kw">NOT NULL REFERENCES</span> users(id),
+  created_at           <span class="ty">TIMESTAMPTZ</span>    <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_sessions_gallery <span class="kw">ON</span> live_sessions(gallery_id);
+<span class="kw">CREATE INDEX</span> idx_sessions_status  <span class="kw">ON</span> live_sessions(status);
+<span class="kw">CREATE INDEX</span> idx_sessions_wm_config <span class="kw">ON</span> live_sessions <span class="kw">USING</span> gin(watermark_config);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: photos (the heart of the system)
+-- facial_data: JSONB array of face clusters
+-- vault_status: NAS backup verification
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> photos (
+  id                 <span class="ty">UUID</span>           <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  session_id         <span class="ty">UUID</span>           <span class="kw">NOT NULL REFERENCES</span> live_sessions(id) <span class="kw">ON DELETE CASCADE</span>,
+  gallery_id         <span class="ty">UUID</span>           <span class="kw">NOT NULL REFERENCES</span> galleries(id),
+  filename           <span class="ty">VARCHAR(255)</span>   <span class="kw">NOT NULL</span>,      <span class="cm">-- original RAW filename, NEVER changed</span>
+  proxy_url          <span class="ty">TEXT</span>,                          <span class="cm">-- R2 signed URL (nulled after archive)</span>
+  r2_key             <span class="ty">TEXT</span>,                          <span class="cm">-- R2 object key for programmatic delete</span>
+  nas_path           <span class="ty">TEXT</span>,                          <span class="cm">-- local path after archiving</span>
+  client_choice      client_choice  <span class="kw">NOT NULL DEFAULT</span> <span class="str">'PENDING'</span>,
+  is_archived        <span class="ty">BOOLEAN</span>        <span class="kw">NOT NULL DEFAULT FALSE</span>,
+  watermark_applied  <span class="ty">BOOLEAN</span>        <span class="kw">NOT NULL DEFAULT FALSE</span>,
+  vault_status       backup_vault_status <span class="kw">NOT NULL DEFAULT</span> <span class="str">'UNVERIFIED'</span>,
+  vault_verified_at  <span class="ty">TIMESTAMPTZ</span>,
+  sort_order         <span class="ty">INT</span>            <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  <span class="cm">-- AI face clustering: [{clusterId, label, boundingBox:{x,y,w,h}, confidence}]</span>
+  facial_data        <span class="ty">JSONB</span>          <span class="kw">NOT NULL DEFAULT</span> <span class="str">'[]'</span>,
+  created_at         <span class="ty">TIMESTAMPTZ</span>    <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at         <span class="ty">TIMESTAMPTZ</span>    <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  <span class="kw">UNIQUE</span>(session_id, filename)
+);
+<span class="kw">CREATE INDEX</span> idx_photos_session         <span class="kw">ON</span> photos(session_id);
+<span class="kw">CREATE INDEX</span> idx_photos_gallery         <span class="kw">ON</span> photos(gallery_id);
+<span class="kw">CREATE INDEX</span> idx_photos_choice          <span class="kw">ON</span> photos(gallery_id, client_choice);
+<span class="kw">CREATE INDEX</span> idx_photos_vault           <span class="kw">ON</span> photos(vault_status);
+<span class="kw">CREATE INDEX</span> idx_photos_facial_gin      <span class="kw">ON</span> photos <span class="kw">USING</span> gin(facial_data); <span class="cm">-- face cluster queries</span>
+<span class="kw">CREATE INDEX</span> idx_photos_not_archived    <span class="kw">ON</span> photos(session_id) <span class="kw">WHERE</span> is_archived = FALSE;
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: products (frame shop)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> products (
+  id                   <span class="ty">UUID</span>             <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  name                 <span class="ty">VARCHAR(120)</span>     <span class="kw">NOT NULL</span>,
+  description          <span class="ty">TEXT</span>,
+  category             product_category  <span class="kw">NOT NULL</span>,
+  base_price           <span class="ty">DECIMAL(10,2)</span>    <span class="kw">NOT NULL</span>,
+  price_per_sq_inch    <span class="ty">DECIMAL(6,4)</span>     <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  overlay_image_url    <span class="ty">TEXT</span>,             <span class="cm">-- transparent PNG from Supabase Storage</span>
+  <span class="cm">-- Gallery: 4 photo URLs + 1 video URL</span>
+  media_photos         <span class="ty">TEXT[]</span>           <span class="kw">CHECK</span>(array_length(media_photos,<span class="num">1</span>) &lt;= <span class="num">4</span>),
+  media_video_url      <span class="ty">TEXT</span>,
+  is_active            <span class="ty">BOOLEAN</span>          <span class="kw">NOT NULL DEFAULT TRUE</span>,
+  display_order        <span class="ty">SMALLINT</span>         <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  review_aggregate     <span class="ty">JSONB</span>            <span class="kw">NOT NULL DEFAULT</span> <span class="str">'{"avg":0,"count":0}'</span>,
+  created_at           <span class="ty">TIMESTAMPTZ</span>      <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_products_category <span class="kw">ON</span> products(category);
+<span class="kw">CREATE INDEX</span> idx_products_active   <span class="kw">ON</span> products(is_active, display_order);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: orders (single-photo frame orders)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> orders (
+  id                    <span class="ty">UUID</span>               <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  client_id             <span class="ty">UUID</span>               <span class="kw">REFERENCES</span> users(id),   <span class="cm">-- null for guest</span>
+  guest_email           <span class="ty">VARCHAR(255)</span>,
+  guest_phone           <span class="ty">VARCHAR(20)</span>,
+  guest_verify_token    <span class="ty">VARCHAR(64)</span>        <span class="kw">UNIQUE</span>,  <span class="cm">-- UUID hex for guest order tracking URL</span>
+  photo_id              <span class="ty">UUID</span>               <span class="kw">REFERENCES</span> photos(id),
+  product_id            <span class="ty">UUID</span>               <span class="kw">NOT NULL REFERENCES</span> products(id),
+  dimensions            <span class="ty">VARCHAR(20)</span>        <span class="kw">NOT NULL</span>,
+  total_price           <span class="ty">DECIMAL(10,2)</span>      <span class="kw">NOT NULL</span>,
+  payment_method        payment_method      <span class="kw">NOT NULL DEFAULT</span> <span class="str">'PENDING'</span>,
+  payment_status        payment_status      <span class="kw">NOT NULL DEFAULT</span> <span class="str">'UNPAID'</span>,
+  razorpay_order_id     <span class="ty">VARCHAR(100)</span>,
+  razorpay_payment_id   <span class="ty">VARCHAR(100)</span>,
+  production_status     production_status   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'NEW'</span>,
+  custom_notes          <span class="ty">TEXT</span>,
+  whatsapp_notified_at  <span class="ty">TIMESTAMPTZ</span>,
+  created_at            <span class="ty">TIMESTAMPTZ</span>        <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at            <span class="ty">TIMESTAMPTZ</span>        <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  <span class="kw">CONSTRAINT</span> chk_order_owner <span class="kw">CHECK</span> (client_id IS NOT NULL OR guest_email IS NOT NULL)
+);
+<span class="kw">CREATE INDEX</span> idx_orders_client         <span class="kw">ON</span> orders(client_id);
+<span class="kw">CREATE INDEX</span> idx_orders_production     <span class="kw">ON</span> orders(production_status);
+<span class="kw">CREATE INDEX</span> idx_orders_payment_status <span class="kw">ON</span> orders(payment_status);
+<span class="kw">CREATE INDEX</span> idx_orders_guest_token    <span class="kw">ON</span> orders(guest_verify_token);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: collage_orders (multi-photo AI canvas orders)
+-- photo_ids: UUID array of selected photos for the collage
+-- layout_template: JSON descriptor of the grid arrangement
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> collage_orders (
+  id                    <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  client_id             <span class="ty">UUID</span>            <span class="kw">REFERENCES</span> users(id),
+  guest_email           <span class="ty">VARCHAR(255)</span>,
+  guest_phone           <span class="ty">VARCHAR(20)</span>,
+  guest_verify_token    <span class="ty">VARCHAR(64)</span>     <span class="kw">UNIQUE</span>,
+  photo_ids             <span class="ty">UUID[]</span>          <span class="kw">NOT NULL</span>,   <span class="cm">-- e.g. [uuid1, uuid2, uuid3]</span>
+  product_id            <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> products(id),
+  dimensions            <span class="ty">VARCHAR(20)</span>     <span class="kw">NOT NULL</span>,
+  <span class="cm">-- Layout: { template: "TRIPTYCH_3H"|"QUAD_2x2"|"DIPTYCH_2V", slots:[{photoId,x,y,w,h}] }</span>
+  layout_template       <span class="ty">JSONB</span>           <span class="kw">NOT NULL</span>,
+  canvas_preview_url    <span class="ty">TEXT</span>,           <span class="cm">-- client-generated canvas PNG snapshot (optional)</span>
+  total_price           <span class="ty">DECIMAL(10,2)</span>   <span class="kw">NOT NULL</span>,
+  payment_method        payment_method   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'PENDING'</span>,
+  payment_status        payment_status   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'UNPAID'</span>,
+  razorpay_order_id     <span class="ty">VARCHAR(100)</span>,
+  production_status     production_status <span class="kw">NOT NULL DEFAULT</span> <span class="str">'NEW'</span>,
+  custom_notes          <span class="ty">TEXT</span>,
+  whatsapp_notified_at  <span class="ty">TIMESTAMPTZ</span>,
+  created_at            <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>(),
+  updated_at            <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_collage_client      <span class="kw">ON</span> collage_orders(client_id);
+<span class="kw">CREATE INDEX</span> idx_collage_photo_ids   <span class="kw">ON</span> collage_orders <span class="kw">USING</span> gin(photo_ids); <span class="cm">-- array lookup</span>
+<span class="kw">CREATE INDEX</span> idx_collage_layout      <span class="kw">ON</span> collage_orders <span class="kw">USING</span> gin(layout_template);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: guest_pass_links (social sharing hub — Engine A)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> guest_pass_links (
+  id               <span class="ty">UUID</span>          <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  session_id       <span class="ty">UUID</span>          <span class="kw">NOT NULL REFERENCES</span> live_sessions(id) <span class="kw">ON DELETE CASCADE</span>,
+  created_by       <span class="ty">UUID</span>          <span class="kw">NOT NULL REFERENCES</span> users(id),
+  access_token     <span class="ty">VARCHAR(64)</span>   <span class="kw">NOT NULL UNIQUE</span>,  <span class="cm">-- URL slug token</span>
+  label            <span class="ty">VARCHAR(80)</span>,                    <span class="cm">-- "Grandma's phone"</span>
+  expires_at       <span class="ty">TIMESTAMPTZ</span>   <span class="kw">NOT NULL</span>,
+  view_count       <span class="ty">INT</span>           <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  is_revoked       <span class="ty">BOOLEAN</span>       <span class="kw">NOT NULL DEFAULT FALSE</span>,
+  created_at       <span class="ty">TIMESTAMPTZ</span>   <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+<span class="kw">CREATE INDEX</span> idx_guest_pass_token   <span class="kw">ON</span> guest_pass_links(access_token);
+<span class="kw">CREATE INDEX</span> idx_guest_pass_session <span class="kw">ON</span> guest_pass_links(session_id);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- TABLE: upsell_transactions (Unlock Extra Deliverables)
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE TABLE</span> upsell_transactions (
+  id                  <span class="ty">UUID</span>            <span class="kw">PRIMARY KEY DEFAULT</span> uuid_generate_v4(),
+  session_id          <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> live_sessions(id),
+  client_id           <span class="ty">UUID</span>            <span class="kw">NOT NULL REFERENCES</span> users(id),
+  upsell_type         <span class="ty">VARCHAR(30)</span>     <span class="kw">NOT NULL</span>,  <span class="cm">-- 'EXTRA_10'|'FULL_WAITLIST'</span>
+  extra_slots         <span class="ty">INT</span>             <span class="kw">NOT NULL DEFAULT</span> <span class="num">0</span>,
+  amount_paid         <span class="ty">DECIMAL(8,2)</span>    <span class="kw">NOT NULL</span>,
+  razorpay_payment_id <span class="ty">VARCHAR(100)</span>,
+  payment_status      payment_status   <span class="kw">NOT NULL DEFAULT</span> <span class="str">'UNPAID'</span>,
+  created_at          <span class="ty">TIMESTAMPTZ</span>     <span class="kw">NOT NULL DEFAULT NOW</span>()
+);
+
+<span class="cm">-- ───────────────────────────────────────────
+-- FUNCTION: auto-update updated_at timestamp
+-- ───────────────────────────────────────────</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> trigger_set_updated_at()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  NEW.updated_at = NOW();
+  <span class="kw">RETURN NEW</span>;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE plpgsql</span>;
+
+<span class="kw">DO</span> $$
+<span class="kw">DECLARE</span> t <span class="ty">TEXT</span>;
+<span class="kw">BEGIN</span>
+  <span class="kw">FOREACH</span> t <span class="kw">IN ARRAY ARRAY</span>[<span class="str">'users'</span>,<span class="str">'packages'</span>,<span class="str">'galleries'</span>,<span class="str">'photos'</span>,<span class="str">'orders'</span>,<span class="str">'collage_orders'</span>] <span class="kw">LOOP</span>
+    <span class="kw">EXECUTE</span> format(<span class="str">'CREATE TRIGGER trg_updated_at BEFORE UPDATE ON %I FOR EACH ROW EXECUTE FUNCTION trigger_set_updated_at()'</span>, t);
+  <span class="kw">END LOOP</span>;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE plpgsql</span>;
+
+<span class="cm">-- ───────────────────────────────────────────
+-- ROW LEVEL SECURITY
+-- Enable on all tables; admin bypass via service_role key
+-- ───────────────────────────────────────────</span>
+<span class="kw">ALTER TABLE</span> users              <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> galleries          <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> live_sessions      <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> photos             <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> orders             <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> collage_orders     <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="cm">-- Clients can only see their own galleries</span>
+<span class="kw">CREATE POLICY</span> client_own_gallery <span class="kw">ON</span> galleries
+  <span class="kw">FOR SELECT USING</span> (client_id = auth.uid());
+
+<span class="cm">-- Clients can only see photos in their own gallery</span>
+<span class="kw">CREATE POLICY</span> client_own_photos <span class="kw">ON</span> photos
+  <span class="kw">FOR SELECT USING</span> (
+    gallery_id <span class="kw">IN</span> (<span class="kw">SELECT</span> id <span class="kw">FROM</span> galleries <span class="kw">WHERE</span> client_id = auth.uid())
+  );
+
+<span class="cm">-- Clients can only UPDATE their own photo choices</span>
+<span class="kw">CREATE POLICY</span> client_update_choice <span class="kw">ON</span> photos
+  <span class="kw">FOR UPDATE USING</span> (
+    gallery_id <span class="kw">IN</span> (<span class="kw">SELECT</span> id <span class="kw">FROM</span> galleries <span class="kw">WHERE</span> client_id = auth.uid())
+  )
+  <span class="kw">WITH CHECK</span> (client_choice <span class="kw">IN</span> (<span class="str">'SELECTED'</span>, <span class="str">'WAITLIST'</span>, <span class="str">'TRASH'</span>, <span class="str">'PENDING'</span>));
+
+<span class="cm">-- Clients can see their own orders</span>
+<span class="kw">CREATE POLICY</span> client_own_orders <span class="kw">ON</span> orders
+  <span class="kw">FOR SELECT USING</span> (client_id = auth.uid());
+
+<span class="cm">-- NOTE: All admin operations use the Supabase SERVICE_ROLE key on the backend,</span>
+<span class="cm">-- which bypasses RLS entirely. Never expose the service role key to the frontend.</span></pre>
+
+  <div class="callout blue">
+    <div class="icon">🔑</div>
+    <div class="body">
+      <strong>RLS Architecture Pattern</strong>
+      <p>The Next.js frontend uses the <code>anon</code> key with user JWTs (RLS enforced). The Express backend uses the <code>service_role</code> key (RLS bypassed — full admin access). The daemon also uses <code>service_role</code>. Never ship <code>service_role</code> in any client-side bundle.</p>
+    </div>
+  </div>
+</section>
+<hr class="divider"/>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- 05 · ADVANCED FEATURES -->
+<!-- ═══════════════════════════════════════════ -->
+<section id="advanced">
+  <div class="section-label">05 · Advanced Feature Implementations</div>
+  <h2>ADVANCED FEATURES — TECHNICAL SPEC</h2>
+  <p class="section-desc">Implementation notes for the Revenue Boosters, AI Face Grouping, NAS Backup Auditor, and Fail-Safe selection state.</p>
+
+  <div class="grid-2" style="margin-bottom:28px">
+    <div class="arch-box">
+      <h4>💸 UPSELL MICROTRANSACTION TRIGGER</h4>
+      <ul class="step-list">
+        <li><div class="step-num">1</div><div class="step-body"><strong>Trigger condition</strong><span>: Client marks image SELECTED when <code>selected_count === selection_limit</code> AND <code>waitlist_count > 0</code></span></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><strong>Frontend fires</strong><span>: instant overlay modal (no server round-trip) offering "Unlock 10 more for ₹999" or "Unlock your entire Waitlist (N photos) for ₹1,999"</span></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><strong>One-click Razorpay</strong><span>: Opens Razorpay Checkout SDK inline. On <code>payment.captured</code> webhook, backend increments <code>live_sessions.selection_limit</code> and inserts into <code>upsell_transactions</code></span></div></li>
+        <li><div class="step-num">4</div><div class="step-body"><strong>Socket broadcast</strong><span>: Server emits <code>selection:limit_update</code> with new limit to the client's session room — counter updates instantly</span></div></li>
+      </ul>
+    </div>
+    <div class="arch-box">
+      <h4>🧠 AI FACE GROUPING WORKER</h4>
+      <ul class="step-list">
+        <li><div class="step-num">1</div><div class="step-body"><strong>face-api.js in Web Worker</strong><span>: Runs <code>detectAllFaces().withFaceLandmarks().withFaceDescriptors()</span> on each photo's <code>&lt;img&gt;</code> DOM element — off main thread, no UI freeze</span></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><strong>Euclidean distance clustering</strong><span>: faceapi.euclideanDistance threshold 0.5 groups faces into clusters. Admin labels clusters: "Bride", "Groom", "Guest 1"</span></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><strong>PATCH /photos/:id/facial_data</strong><span>: Cluster data is POSTed to the backend and stored in the <code>facial_data JSONB</code> column (GIN indexed for fast <code>?</code> queries)</span></div></li>
+        <li><div class="step-num">4</div><div class="step-body"><strong>Filter UI</strong><span>: Toggling a face badge fires a <code>SELECT</code> query: <code>WHERE facial_data @> '[{"clusterId":"bride"}]'</code> — sub-50ms results</span></div></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="arch-box">
+    <h4>💾 REDIS FAIL-SAFE — ZERO DATA LOSS ON DISCONNECT</h4>
+    <p style="color:var(--white-dim);font-size:14px;margin-bottom:16px">Client selection state is written to <strong>three layers simultaneously</strong> on every interaction:</p>
+    <div class="layer-stack">
+      <div class="layer l3">
+        <div class="lname">Layer 1 — localStorage</div>
+        <div class="ldesc">Instant synchronous write on every SELECTED/WAITLIST/TRASH toggle. Key: <code>selection:{sessionId}:{clientId}</code>. Survives page refresh.</div>
+      </div>
+      <div class="layer l2">
+        <div class="lname">Layer 2 — Upstash Redis (debounced)</div>
+        <div class="ldesc">250ms debounce — writes full selection state JSON to Redis key with 7-day TTL. Survives network disconnect. Used for cross-device resume.</div>
+      </div>
+      <div class="layer l1">
+        <div class="lname">Layer 3 — Supabase PostgreSQL (authoritative)</div>
+        <div class="ldesc">Authoritative record. Updated via server-side PATCH from the Socket.io event handler. Used for final extraction and admin report.</div>
+      </div>
+    </div>
+    <pre style="margin-top:16px"><span class="cm">// Client-side: every selection toggle triggers this</span>
+<span class="kw">function</span> <span class="fn">persistSelection</span>(sessionId, photoId, choice) {
+  <span class="cm">// Layer 1: localStorage (synchronous, instant)</span>
+  <span class="kw">const</span> key = <span class="str">`sel:${sessionId}`</span>;
+  <span class="kw">const</span> state = JSON.parse(localStorage.getItem(key) || <span class="str">'{}'</span>);
+  state[photoId] = choice;
+  localStorage.setItem(key, JSON.stringify(state));
+
+  <span class="cm">// Layer 2: Redis via server (debounced 250ms)</span>
+  <span class="fn">debouncedSync</span>(sessionId, state);
+
+  <span class="cm">// Layer 3: DB via Socket.io event</span>
+  socket.emit(<span class="str">'selection:update'</span>, { photoId, choice });
+}
+
+<span class="cm">// On page load / reconnect: restore from localStorage first, validate vs Redis</span>
+<span class="kw">async function</span> <span class="fn">restoreSelectionState</span>(sessionId) {
+  <span class="kw">const</span> local = JSON.parse(localStorage.getItem(<span class="str">`sel:${sessionId}`</span>) || <span class="str">'{}'</span>);
+  <span class="kw">const</span> server = <span class="kw">await</span> fetch(<span class="str">`/api/sessions/${sessionId}/state`</span>).then(r => r.json());
+  <span class="cm">// Merge: server state wins for photos server has confirmed, local wins for unsynced</span>
+  <span class="kw">return</span> { ...local, ...server.state };
+}</pre>
+  </div>
+
+  <div class="arch-box">
+    <h4>🗄️ NAS BACKUP AUDITOR — VAULT VERIFICATION</h4>
+    <pre><span class="cm">// workers/vaultAuditor.js — runs as a BullMQ job after session COMPLETED</span>
+
+<span class="kw">async function</span> <span class="fn">auditVault</span>(sessionId) {
+  <span class="kw">const</span> photos = <span class="kw">await</span> db.query(
+    <span class="str">'SELECT id, filename, nas_path, client_choice FROM photos WHERE session_id=$1'</span>,
+    [sessionId]
+  );
+
+  <span class="kw">for</span> (<span class="kw">const</span> photo <span class="kw">of</span> photos.rows) {
+    <span class="kw">if</span> (!photo.nas_path) {
+      <span class="kw">await</span> <span class="fn">updateVaultStatus</span>(photo.id, <span class="str">'MISSING'</span>);
+      <span class="kw">continue</span>;
+    }
+
+    <span class="cm">// Check if file physically exists on NAS path</span>
+    <span class="cm">// NAS is mounted locally on the daemon machine; daemon exposes a /verify endpoint</span>
+    <span class="kw">const</span> { data } = <span class="kw">await</span> axios.post(
+      <span class="str">`${process.env.API_BASE}/daemon/verify-file`</span>,
+      { path: photo.nas_path },
+      { headers: { <span class="str">'x-daemon-secret'</span>: process.env.DAEMON_SECRET } }
+    );
+
+    <span class="kw">await</span> <span class="fn">updateVaultStatus</span>(photo.id, data.exists ? <span class="str">'VAULTED'</span> : <span class="str">'MISSING'</span>);
+  }
+}
+
+<span class="cm">// Admin UI shows a badge per photo: 🟢 VAULTED | 🔴 MISSING | ⚪ UNVERIFIED</span>
+<span class="cm">// Admin can re-trigger audit manually from the session detail page</span></pre>
+  </div>
+</section>
+<hr class="divider"/>
+
+<!-- SUMMARY -->
+<section>
+  <div class="section-label">06 · Implementation Summary</div>
+  <h2>DELIVERY CHECKLIST</h2>
+  <p class="section-desc">Everything needed to begin Phase 1 development immediately.</p>
+
+  <div class="grid-3">
+    <div class="card">
+      <h3>📁 FILES TO CREATE</h3>
+      <div class="pill-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <span class="pill blue" style="border-radius:6px">daemon/index.js</span>
+        <span class="pill blue" style="border-radius:6px">daemon/watermarkBuilder.js</span>
+        <span class="pill orange" style="border-radius:6px">services/bookingFeasibility.js</span>
+        <span class="pill orange" style="border-radius:6px">routes/daemon.js</span>
+        <span class="pill green" style="border-radius:6px">supabase/migrations/001_init.sql</span>
+        <span class="pill green" style="border-radius:6px">workers/vaultAuditor.js</span>
+        <span class="pill warn" style="border-radius:6px">components/WatermarkCanvas.jsx</span>
+        <span class="pill purple" style="border-radius:6px">hooks/useSelectionState.js</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🔑 ENV VARS NEEDED</h3>
+      <div class="pill-row" style="flex-direction:column;align-items:flex-start;gap:6px">
+        <span class="pill" style="border-radius:6px">DAEMON_SECRET</span>
+        <span class="pill" style="border-radius:6px">R2_ENDPOINT / ACCESS / SECRET</span>
+        <span class="pill" style="border-radius:6px">R2_BUCKET</span>
+        <span class="pill" style="border-radius:6px">SUPABASE_URL</span>
+        <span class="pill" style="border-radius:6px">SUPABASE_SERVICE_ROLE_KEY</span>
+        <span class="pill" style="border-radius:6px">UPSTASH_REDIS_URL</span>
+        <span class="pill" style="border-radius:6px">RAZORPAY_KEY_ID / SECRET</span>
+        <span class="pill" style="border-radius:6px">HOT_FOLDER / NAS_ROOT</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>⚡ PHASE 1 PRIORITIES</h3>
+      <ul class="step-list">
+        <li><div class="step-num">1</div><div class="step-body"><strong>Run the DDL migration</strong><span>: paste schema into Supabase SQL editor, run, verify all tables</span></div></li>
+        <li><div class="step-num">2</div><div class="step-body"><strong>Install daemon on workstation</strong><span>: configure .env, pm2 start, verify chokidar picks up test files</span></div></li>
+        <li><div class="step-num">3</div><div class="step-body"><strong>Build /daemon/* Express routes</strong><span>: <code>/session</code>, <code>/photo-ready</code>, <code>/verify-file</code></span></div></li>
+        <li><div class="step-num">4</div><div class="step-body"><strong>Socket.io room setup</strong><span>: session namespacing, join/leave events, auth middleware</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:var(--orange);margin-bottom:8px">NAREN'S STUDIO · ENGINEERING BLUEPRINT V2</div>
+  <div>Architecture · WebSocket Pipeline · Geofencing Calendar · Full PostgreSQL DDL</div>
+  <div style="margin-top:8px;color:var(--white-faint);font-size:12px">Confidential · Internal Use Only · Naren's Studio © 2025</div>
+</footer>
+
+</body>
+</html>

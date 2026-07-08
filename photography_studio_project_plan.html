@@ -1,0 +1,266 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.root { padding: 1.5rem 0; }
+.hero { text-align: center; margin-bottom: 2rem; }
+.hero h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; }
+.hero p { font-size: 14px; color: var(--color-text-secondary); }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tab { padding: 6px 14px; font-size: 13px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all .15s; }
+.tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); font-weight: 500; }
+.tab:hover:not(.active) { background: var(--color-background-secondary); }
+.section { display: none; }
+.section.active { display: block; }
+.phase-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.phase-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+.phase-label { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); display: inline-block; margin-bottom: 10px; }
+.p1 { background: var(--color-background-info); color: var(--color-text-info); }
+.p2 { background: var(--color-background-success); color: var(--color-text-success); }
+.p3 { background: var(--color-background-warning); color: var(--color-text-warning); }
+.p4 { background: var(--color-background-danger); color: var(--color-text-danger); }
+.phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.phase-dur { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 10px; }
+.task-list { list-style: none; }
+.task-list li { font-size: 13px; color: var(--color-text-secondary); padding: 4px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; align-items: flex-start; gap: 7px; }
+.task-list li:last-child { border-bottom: none; }
+.task-list li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-primary); flex-shrink: 0; margin-top: 6px; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.feat-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px; }
+.feat-icon { font-size: 20px; margin-bottom: 8px; color: var(--color-text-secondary); }
+.feat-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.feat-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pc-card { background: var(--color-background-primary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+.pros-card { border: 0.5px solid var(--color-border-success); }
+.cons-card { border: 0.5px solid var(--color-border-danger); }
+.pc-title { font-size: 14px; font-weight: 500; margin-bottom: 12px; }
+.pros-card .pc-title { color: var(--color-text-success); }
+.cons-card .pc-title { color: var(--color-text-danger); }
+.pc-item { font-size: 13px; color: var(--color-text-secondary); padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); display: flex; gap: 8px; align-items: flex-start; }
+.pc-item:last-child { border-bottom: none; }
+.pc-badge { font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: var(--border-radius-md); white-space: nowrap; flex-shrink: 0; }
+.sol-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 10px; }
+.sol-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.sol-num { width: 24px; height: 24px; border-radius: 50%; background: var(--color-background-info); color: var(--color-text-info); font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sol-prob { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.sol-ans { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; padding: 10px 12px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); }
+.stack-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.stack-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; }
+.stack-cat { font-size: 11px; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+.stack-item { font-size: 13px; color: var(--color-text-primary); padding: 3px 0; }
+.sugg-list { list-style: none; }
+.sugg-item { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+.sugg-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); background: var(--color-background-warning); color: var(--color-text-warning); white-space: nowrap; flex-shrink: 0; }
+.sugg-text { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--color-border-secondary); }
+.tl-item { position: relative; margin-bottom: 20px; }
+.tl-dot { position: absolute; left: -21px; top: 4px; width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--color-background-primary); }
+.tl-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.tl-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+@media (max-width: 500px) { .pros-cons { grid-template-columns: 1fr; } }
+</style>
+<div class="root">
+  <div class="hero">
+    <h1>📷 Photography Studio — Full Project Plan</h1>
+    <p>Complete blueprint with features, phases, tech stack, pros/cons & solutions</p>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="show('overview')">Overview</button>
+    <button class="tab" onclick="show('phases')">Phases</button>
+    <button class="tab" onclick="show('features')">Features</button>
+    <button class="tab" onclick="show('pros-cons')">Pros & Cons</button>
+    <button class="tab" onclick="show('solutions')">Solutions</button>
+    <button class="tab" onclick="show('stack')">Tech Stack</button>
+    <button class="tab" onclick="show('extras')">Suggestions</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="section active" id="overview">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot" style="background:#378ADD"></div><div class="tl-title">Phase 1 — Foundation (Weeks 1–4)</div><div class="tl-sub">Landing page, portfolio, admin panel, CMS for photos</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:#1D9E75"></div><div class="tl-title">Phase 2 — Shop & Frames (Weeks 5–8)</div><div class="tl-sub">Product catalog, custom frame ordering, photo upload by clients</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:#BA7517"></div><div class="tl-title">Phase 3 — Live Shoot Room (Weeks 9–14)</div><div class="tl-sub">QR rooms, camera-to-web pipeline, RAW→JPEG conversion, watermarking</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:#A32D2D"></div><div class="tl-title">Phase 4 — Photo Selection Room (Weeks 15–20)</div><div class="tl-sub">Like/trash/wait workflow, customer invite, PDF/Excel export</div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:#534AB7"></div><div class="tl-title">Phase 5 — Polish & Launch (Weeks 21–24)</div><div class="tl-sub">Security hardening, mobile QA, screenshot prevention, SEO, go-live</div></div>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-top:8px;">
+      <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.7;">
+        <strong style="color:var(--color-text-primary)">Estimated total duration:</strong> 24 weeks (6 months) with a small dev team (2 devs + 1 designer).<br>
+        <strong style="color:var(--color-text-primary)">Target users:</strong> Studio owner (admin), walk-in clients (shop), booked-shoot clients (selection room), event guests (live room).<br>
+        <strong style="color:var(--color-text-primary)">Core goal:</strong> A visually stunning, photo-first website that doubles as a complete studio management tool.
+      </div>
+    </div>
+  </div>
+
+  <!-- PHASES -->
+  <div class="section" id="phases">
+    <div class="phase-grid">
+      <div class="phase-card">
+        <span class="phase-label p1">Phase 1</span>
+        <div class="phase-title">Foundation & Portfolio</div>
+        <div class="phase-dur"><i class="ti ti-calendar" aria-hidden="true"></i> Weeks 1–4</div>
+        <ul class="task-list">
+          <li>Full-screen hero with studio branding & logo</li>
+          <li>Animated gallery page (masonry/grid layout)</li>
+          <li>About, Services, Contact pages</li>
+          <li>Admin login & dashboard with CRUD for all content</li>
+          <li>Photo upload, categorize, delete, reorder</li>
+          <li>SEO meta tags, sitemap, fast image loading (WebP)</li>
+        </ul>
+      </div>
+      <div class="phase-card">
+        <span class="phase-label p2">Phase 2</span>
+        <div class="phase-title">Shop & Frame Orders</div>
+        <div class="phase-dur"><i class="ti ti-calendar" aria-hidden="true"></i> Weeks 5–8</div>
+        <ul class="task-list">
+          <li>Product catalog — frame sizes, materials, prices</li>
+          <li>Admin CRUD for products (add/edit/delete/price)</li>
+          <li>Client uploads their own photo from mobile</li>
+          <li>Frame preview mockup with uploaded photo</li>
+          <li>Order form with details (size, quantity, delivery)</li>
+          <li>Admin order management dashboard</li>
+          <li>WhatsApp/email notification on new order</li>
+        </ul>
+      </div>
+      <div class="phase-card">
+        <span class="phase-label p3">Phase 3</span>
+        <div class="phase-title">Live Shoot Room</div>
+        <div class="phase-dur"><i class="ti ti-calendar" aria-hidden="true"></i> Weeks 9–14</div>
+        <ul class="task-list">
+          <li>Admin creates room → generates QR code</li>
+          <li>QR scan → anyone joins the live room</li>
+          <li>Camera software sends images via API/FTP/webhook</li>
+          <li>Auto RAW → JPEG conversion (server-side)</li>
+          <li>Watermark overlay with studio logo</li>
+          <li>Admin sets watermark position per room</li>
+          <li>Pause / Resume / Close room controls</li>
+          <li>Temporary storage — deleted on room close</li>
+        </ul>
+      </div>
+      <div class="phase-card">
+        <span class="phase-label p4">Phase 4</span>
+        <div class="phase-title">Photo Selection Room</div>
+        <div class="phase-dur"><i class="ti ti-calendar" aria-hidden="true"></i> Weeks 15–20</div>
+        <ul class="task-list">
+          <li>Invite customer via email / WhatsApp / SMS link</li>
+          <li>Shared room: admin + client see same photos</li>
+          <li>Three actions per photo: ❤️ Like / 🗑️ Trash / ⏳ Wait</li>
+          <li>Access waiting list anytime; move to like or trash</li>
+          <li>Large watermark on displayed images (anti-screenshot)</li>
+          <li>Screenshot prevention (CSS + JS layer)</li>
+          <li>Export liked photos as PDF (thumbnail + filename)</li>
+          <li>Remaining wait-list auto-moved to trash at end</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="section" id="features">
+    <div class="feature-grid">
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-layout-dashboard" aria-hidden="true"></i></div><div class="feat-title">Admin dashboard</div><div class="feat-desc">Full CRUD for photos, products, orders, rooms, and settings — all from one panel.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-photo" aria-hidden="true"></i></div><div class="feat-title">Gallery with masonry</div><div class="feat-desc">Responsive photo grid with lightbox, lazy load, and category filters.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-shopping-cart" aria-hidden="true"></i></div><div class="feat-title">Frame shop</div><div class="feat-desc">Product pages with client photo upload, frame preview, and online ordering.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-qrcode" aria-hidden="true"></i></div><div class="feat-title">Live shoot room</div><div class="feat-desc">QR-code join, real-time photo upload from camera, watermark controls, pause/close.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-file-export" aria-hidden="true"></i></div><div class="feat-title">RAW → JPEG pipeline</div><div class="feat-desc">Server-side conversion (dcraw / LibRaw) so clients see clean JPEGs instantly.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-droplet" aria-hidden="true"></i></div><div class="feat-title">Watermark engine</div><div class="feat-desc">Admin sets position, opacity, and size of logo watermark per room in real time.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-heart" aria-hidden="true"></i></div><div class="feat-title">Photo selection room</div><div class="feat-desc">Like/Trash/Wait system shared between studio and client with live sync.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-file-spreadsheet" aria-hidden="true"></i></div><div class="feat-title">PDF/Excel export</div><div class="feat-desc">Export liked photos as a PDF with thumbnail + filename for easy studio reference.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-shield-lock" aria-hidden="true"></i></div><div class="feat-title">Screenshot prevention</div><div class="feat-desc">CSS user-select:none, pointer-events block, and overlay layer to deter copying.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-mail" aria-hidden="true"></i></div><div class="feat-title">Client invite system</div><div class="feat-desc">Email / SMS / WhatsApp link to invite clients into their personal selection room.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-bell" aria-hidden="true"></i></div><div class="feat-title">Order notifications</div><div class="feat-desc">Admin gets instant alert (email/WhatsApp) when a new frame order is placed.</div></div>
+      <div class="feat-card"><div class="feat-icon"><i class="ti ti-device-mobile" aria-hidden="true"></i></div><div class="feat-title">Fully mobile-first</div><div class="feat-desc">Entire site — gallery, shop, selection room — optimised for phones and tablets.</div></div>
+    </div>
+  </div>
+
+  <!-- PROS & CONS -->
+  <div class="section" id="pros-cons">
+    <div class="pros-cons">
+      <div class="pc-card pros-card">
+        <div class="pc-title"><i class="ti ti-thumb-up" aria-hidden="true"></i> Pros</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">Business</span>All client touchpoints in one platform — no external tools needed.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">Revenue</span>Frame shop opens a product revenue stream beyond just shoots.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">UX</span>Live room gives clients an exciting real-time experience at events.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">Efficiency</span>Photo selection export cuts hours of manual back-and-forth work.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">Brand</span>A stunning photo-first design builds instant trust and credibility.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-success);color:var(--color-text-success)">Control</span>Full admin CRUD means no dependence on third-party platforms.</div>
+      </div>
+      <div class="pc-card cons-card">
+        <div class="pc-title"><i class="ti ti-thumb-down" aria-hidden="true"></i> Cons / Risks</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Technical</span>Camera → web pipeline requires custom integration; depends on camera software.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Cost</span>RAW file conversion is CPU-heavy — needs a capable server or cloud function.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Security</span>Screenshot prevention via CSS/JS is deterrence only, not foolproof.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Complexity</span>Real-time sync (live room + selection room) needs WebSocket infrastructure.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Storage</span>Large RAW files and high-res JPEGs can fill storage quickly without a policy.</div>
+        <div class="pc-item"><span class="pc-badge" style="background:var(--color-background-danger);color:var(--color-text-danger)">Timeline</span>24-week build is ambitious — scope creep can push it to 30+ weeks easily.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUTIONS -->
+  <div class="section" id="solutions">
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">1</div><div class="sol-prob">Camera → web pipeline complexity</div></div>
+      <div class="sol-ans">Use a lightweight tethering app (e.g. digiCamControl on Windows, or custom Python script using gphoto2 on Linux) that watches a folder and POST-uploads each new file to your server via a webhook. This is simpler than a full custom integration and works with most DSLRs and mirrorless cameras.</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">2</div><div class="sol-prob">RAW → JPEG conversion is CPU-heavy</div></div>
+      <div class="sol-ans">Use a serverless cloud function (AWS Lambda or Google Cloud Run) triggered on file upload. Libraries like LibRaw or dcraw handle the conversion. Queue jobs with a Redis/Bull queue so the server never blocks. This scales automatically at events with many cameras.</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">3</div><div class="sol-prob">Screenshot prevention is not foolproof</div></div>
+      <div class="sol-ans">Layer the watermark strategy: (a) display images at a resolution too low to be usable (e.g. 800px wide max), (b) apply a large semi-transparent logo watermark across the center, (c) add CSS pointer-events and user-select:none. The image is useless without purchase — this is the standard industry approach used by Getty, Shutterstock, etc.</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">4</div><div class="sol-prob">Real-time sync for live/selection rooms</div></div>
+      <div class="sol-ans">Use Socket.io (on Node.js) or Supabase Realtime (PostgreSQL-backed). Both handle multi-user rooms well. Supabase is the faster option to build — it provides the database, auth, and realtime in one service with minimal backend code.</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">5</div><div class="sol-prob">Storage fills up quickly</div></div>
+      <div class="sol-ans">Auto-delete temporary files when a live room closes (as you specified). For the permanent gallery, use Cloudinary or AWS S3 with lifecycle policies. Cloudinary also handles image resizing, WebP conversion, and delivery via CDN — cutting both storage cost and page load time significantly.</div>
+    </div>
+    <div class="sol-card">
+      <div class="sol-head"><div class="sol-num">6</div><div class="sol-prob">Timeline risk & scope creep</div></div>
+      <div class="sol-ans">Build in strict phases: launch Phase 1 (portfolio) first — this alone generates business. Add Phase 2 (shop) next. Phases 3 & 4 (live/selection rooms) are advanced features — they can be added after the core business is running. This reduces risk and generates revenue earlier.</div>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <div class="section" id="stack">
+    <div class="stack-grid">
+      <div class="stack-card"><div class="stack-cat">Frontend</div><div class="stack-item">Next.js (React)</div><div class="stack-item">Tailwind CSS</div><div class="stack-item">Framer Motion</div><div class="stack-item">Socket.io client</div></div>
+      <div class="stack-card"><div class="stack-cat">Backend</div><div class="stack-item">Node.js + Express</div><div class="stack-item">Socket.io server</div><div class="stack-item">REST API</div><div class="stack-item">JWT Auth</div></div>
+      <div class="stack-card"><div class="stack-cat">Database</div><div class="stack-item">PostgreSQL (main)</div><div class="stack-item">Redis (queues)</div><div class="stack-item">Supabase (realtime)</div></div>
+      <div class="stack-card"><div class="stack-cat">Storage & Media</div><div class="stack-item">Cloudinary (images)</div><div class="stack-item">AWS S3 (RAW temp)</div><div class="stack-item">LibRaw (RAW→JPEG)</div><div class="stack-item">Sharp.js (watermark)</div></div>
+      <div class="stack-card"><div class="stack-cat">Notifications</div><div class="stack-item">Nodemailer (email)</div><div class="stack-item">Twilio (SMS)</div><div class="stack-item">WhatsApp Business API</div></div>
+      <div class="stack-card"><div class="stack-cat">Exports</div><div class="stack-item">PDFKit / Puppeteer</div><div class="stack-item">ExcelJS (Excel export)</div><div class="stack-item">QR Code (qrcode npm)</div></div>
+      <div class="stack-card"><div class="stack-cat">Camera Bridge</div><div class="stack-item">gphoto2 (Linux)</div><div class="stack-item">digiCamControl (Win)</div><div class="stack-item">Custom webhook uploader</div></div>
+      <div class="stack-card"><div class="stack-cat">Hosting</div><div class="stack-item">Vercel (frontend)</div><div class="stack-item">Railway / Render (API)</div><div class="stack-item">Cloudflare (CDN + DNS)</div></div>
+    </div>
+  </div>
+
+  <!-- SUGGESTIONS -->
+  <div class="section" id="extras">
+    <ul class="sugg-list">
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Booking system:</strong> Let clients book shoots directly from the website — choose date, time, type of shoot, and pay a deposit. Integrates with your WhatsApp confirmation flow.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Client portal:</strong> Each client gets a private login to view their ordered photos, track frame orders, and access past selection rooms.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Testimonials & reviews:</strong> After a shoot, send the client an automated review request. Display approved reviews on the homepage.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Before/After slider:</strong> Show edited vs raw comparison photos on the portfolio page — a powerful way to demonstrate editing skill.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Price packages page:</strong> Clearly display shoot packages (e.g. Basic, Premium, Wedding) with inclusions and pricing. A strong conversion tool.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">WhatsApp bot:</strong> An automated bot that answers FAQs ("What's your price?", "Are you available on X date?") instantly — you mentioned this as optional and it would reduce your response workload significantly.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Analytics dashboard:</strong> Show the admin — most viewed gallery photos, top-selling frames, monthly orders, room usage — all in one chart view.</span></li>
+      <li class="sugg-item"><span class="sugg-badge">💡 Idea</span><span class="sugg-text"><strong style="color:var(--color-text-primary)">Photo album builder:</strong> After the selection room, let the client arrange their liked photos into a digital album layout that can be sent to print. This increases album sales.</span></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
