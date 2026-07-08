@@ -1,0 +1,79 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme inline {
+  --color-sand-bg: #E8E4D9;
+  --color-sand-surface: #F4F1EA;
+  --color-sand-text: #1A1815;
+  --color-sand-muted: #5E5950;
+  --color-sand-border: #D1CCC0;
+  --color-sand-accent: #C4701A;
+  
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+:root {
+  --background: #E8E4D9; /* Warm Sandstone */
+  --foreground: #1A1815; /* Deep Espresso */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Premium photography aesthetic utilities */
+.glass {
+  background: rgba(244, 241, 234, 0.6); /* Alabaster translucent */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(209, 204, 192, 0.4); /* Sand border */
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #2C2A25 0%, #8C857B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Global Image Styling for Theme Cohesion */
+.img-theme {
+  filter: sepia(0.15) contrast(1.05) saturate(0.85);
+  transition: filter 0.5s ease;
+}
+.img-theme:hover {
+  filter: sepia(0) contrast(1.1) saturate(1);
+}
+
+/* Hide scrollbar for gallery elements */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Vertical Scrolling Marquee Animations */
+@keyframes scroll-vertical-up {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes scroll-vertical-down {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+.animate-scroll-up {
+  animation: scroll-vertical-up 30s linear infinite;
+}
+
+.animate-scroll-down {
+  animation: scroll-vertical-down 30s linear infinite;
+}

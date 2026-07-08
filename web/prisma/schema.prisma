@@ -1,0 +1,329 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id         String    @id @default(uuid())
+  email      String    @unique
+  full_name  String?
+  phone      String?
+  address    String?
+  city       String?
+  pincode        String?
+  role           String    @default("client") // 'admin' or 'client'
+  preferred_lang String    @default("en")
+  password_hash  String?
+  
+  // OTP Verification Fields
+  is_verified    Boolean   @default(false)
+  otp_code       String?
+  otp_expiry     DateTime?
+
+  created_at     DateTime  @default(now())
+
+  rooms      Room[]
+  selections Selection[]
+  orders     Order[]
+  enquiries  Enquiry[]
+  messages   Message[]
+  bookings   Booking[]
+  invoices   Invoice[]
+  contracts  Contract[]
+
+  @@map("users")
+}
+
+model GalleryCategory {
+  id         String    @id @default(uuid())
+  name       String
+  slug       String    @unique
+  created_at DateTime  @default(now())
+
+  photos     Photo[]
+
+  @@map("gallery_categories")
+}
+
+model Photo {
+  id             String           @id @default(uuid())
+  title          String?
+  url            String
+  category_id    String?
+  display_order  Int              @default(0)
+  is_public      Boolean          @default(true)
+  created_at     DateTime         @default(now())
+
+  category       GalleryCategory? @relation(fields: [category_id], references: [id], onDelete: SetNull)
+  room_photos    RoomPhoto[]
+  selections     Selection[]
+
+  @@map("photos")
+}
+
+model Room {
+  id           String    @id @default(uuid())
+  client_id    String?
+  name         String
+  type         String    @default("live") // 'live' or 'selection'
+  status       String    @default("active") // 'active' or 'archived'
+  access_code  String?   @unique
+  created_at   DateTime  @default(now())
+  is_finalized Boolean   @default(false)
+
+  client       User?     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  room_photos  RoomPhoto[]
+  selections   Selection[]
+
+  @@map("rooms")
+}
+
+model RoomPhoto {
+  id           String   @id @default(uuid())
+  room_id      String
+  photo_id     String
+  uploaded_at  DateTime @default(now())
+
+  room         Room     @relation(fields: [room_id], references: [id], onDelete: Cascade)
+  photo        Photo    @relation(fields: [photo_id], references: [id], onDelete: Cascade)
+
+  @@map("room_photos")
+}
+
+model Selection {
+  id         String   @id @default(uuid())
+  room_id    String
+  client_id  String
+  photo_id   String
+  status     String   @default("waitlist") // 'liked', 'waitlist', 'trashed'
+  notes      String?
+  updated_at DateTime @default(now())
+
+  room       Room     @relation(fields: [room_id], references: [id], onDelete: Cascade)
+  client     User     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  photo      Photo    @relation(fields: [photo_id], references: [id], onDelete: Cascade)
+
+  @@unique([room_id, client_id, photo_id])
+  @@map("selections")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  category      String
+  thumbnail_url String?
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+
+  sizes         ProductSize[]
+  media         ProductMedia[]
+  orders        Order[]
+  enquiries     Enquiry[]
+
+  @@map("products")
+}
+
+model ProductSize {
+  id         String   @id @default(uuid())
+  product_id String
+  name       String
+  price      Float
+  created_at DateTime @default(now())
+
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  orders     Order[]
+
+  @@map("product_sizes")
+}
+
+model ProductMedia {
+  id         String   @id @default(uuid())
+  product_id String
+  url        String
+  type       String   @default("image") // 'image' or 'video'
+  sort_order Int      @default(0)
+  created_at DateTime @default(now())
+
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("product_media")
+}
+
+model Order {
+  id               String   @id @default(uuid())
+  client_id        String?
+  product_id       String?
+  size_id          String?
+  photo_url        String?
+  total_amount     Float
+  status           String   @default("pending") // 'pending', 'processing', 'shipped', 'delivered'
+  payment_status   String   @default("pending") // 'pending', 'paid', 'failed'
+  payment_method   String   @default("cash")    // 'cash', 'upi', 'razorpay'
+  razorpay_order_id String?
+  razorpay_payment_id String?
+  razorpay_signature String?
+  shipping_address String
+  tracking_number  String?
+  tracking_message String?
+  created_at       DateTime @default(now())
+
+  client           User?        @relation(fields: [client_id], references: [id], onDelete: SetNull)
+  product          Product?     @relation(fields: [product_id], references: [id], onDelete: SetNull)
+  size             ProductSize? @relation(fields: [size_id], references: [id], onDelete: SetNull)
+  messages         Message[]
+
+  @@map("orders")
+}
+
+model Enquiry {
+  id           String   @id @default(uuid())
+  client_id    String
+  product_id   String
+  dimensions   String
+  status       String   @default("pending") // 'pending', 'replied', 'closed'
+  created_at   DateTime @default(now())
+
+  client       User     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  product      Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  messages     Message[]
+
+  @@map("enquiries")
+}
+
+model Message {
+  id           String   @id @default(uuid())
+  enquiry_id   String?
+  order_id     String?
+  sender_id    String
+  text         String
+  created_at   DateTime @default(now())
+
+  enquiry      Enquiry? @relation(fields: [enquiry_id], references: [id], onDelete: Cascade)
+  order        Order?   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  sender       User     @relation(fields: [sender_id], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model HeroImage {
+  id         String   @id @default(uuid())
+  url        String
+  sort_order Int      @default(0)
+  created_at DateTime @default(now())
+
+  @@map("hero_images")
+}
+
+model SiteSettings {
+  id              String   @id @default("global")
+  address         String   @default("123 Photography Lane\nCreative District, New York, NY 10001")
+  phone           String   @default("+1 (555) 123-4567\nMon-Sat, 9AM to 7PM EST")
+  email           String   @default("hello@narensstudio.com\nbookings@narensstudio.com")
+  location_image  String?
+  updated_at      DateTime @default(now())
+
+  @@map("site_settings")
+}
+
+model Package {
+  id         String   @id @default(uuid())
+  name       String
+  price      Float
+  tier_color String   @default("blue")
+  limits     String
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+
+  @@map("packages")
+}
+
+model Resource {
+  id         String   @id @default(uuid())
+  name       String
+  type       String   @default("photographer") // 'photographer', 'videographer', 'drone', 'equipment'
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+
+  assignments ResourceAssignment[]
+
+  @@map("resources")
+}
+
+model Booking {
+  id            String   @id @default(uuid())
+  client_id     String
+  title         String
+  event_start   DateTime
+  event_end     DateTime
+  venue_lat     Float
+  venue_lng     Float
+  venue_address String
+  notes         String?
+  status        String   @default("confirmed") // 'confirmed', 'pending', 'cancelled'
+  created_at    DateTime @default(now())
+
+  client        User                 @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  assignments   ResourceAssignment[]
+
+  @@map("bookings")
+}
+
+model ResourceAssignment {
+  id           String   @id @default(uuid())
+  booking_id   String
+  resource_id  String
+  buffer_start DateTime
+  buffer_end   DateTime
+
+  booking      Booking  @relation(fields: [booking_id], references: [id], onDelete: Cascade)
+  resource     Resource @relation(fields: [resource_id], references: [id], onDelete: Cascade)
+
+  @@unique([booking_id, resource_id])
+  @@map("resource_assignments")
+}
+
+model Invoice {
+  id           String   @id @default(uuid())
+  client_id    String
+  amount       Float
+  status       String   @default("unpaid") // 'unpaid', 'paid', 'overdue'
+  due_date     DateTime
+  description  String?
+  created_at   DateTime @default(now())
+
+  client       User     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+model Contract {
+  id           String   @id @default(uuid())
+  client_id    String
+  title        String
+  content      String
+  status       String   @default("pending") // 'pending', 'signed'
+  signed_at    DateTime?
+  created_at   DateTime @default(now())
+
+  client       User     @relation(fields: [client_id], references: [id], onDelete: Cascade)
+
+  @@map("contracts")
+}
+
+model Post {
+  id           String   @id @default(uuid())
+  title        String
+  slug         String   @unique
+  content      String
+  cover_image  String?
+  is_published Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+
+  @@map("posts")
+}
