@@ -32,11 +32,11 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Fetch auth state
+    // Fetch auth state whenever pathname changes
     getAuthState().then((state) => {
       setAuthState(state);
     });
-  }, []);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await logout();

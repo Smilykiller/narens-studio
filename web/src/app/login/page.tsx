@@ -59,16 +59,16 @@ export default function LoginPage() {
 
 
 
-      // Success! Redirect based on URL param or role
+      // Success! Perform hard navigation so cookies immediately apply & Navbar updates
       const params = new URLSearchParams(window.location.search);
       const redirectUrl = params.get("redirect");
 
       if (redirectUrl) {
-        router.push(redirectUrl);
+        window.location.href = redirectUrl;
       } else if (result.user?.role === "admin") {
-        router.push("/admin/portfolio");
+        window.location.href = "/admin/portfolio";
       } else {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError("An unexpected error occurred. Please try again.");
@@ -98,9 +98,9 @@ export default function LoginPage() {
       const redirectUrl = params.get("redirect");
 
       if (redirectUrl) {
-        router.push(redirectUrl);
+        window.location.href = redirectUrl;
       } else {
-        router.push("/dashboard");
+        window.location.href = "/dashboard";
       }
     } catch (err) {
       setError("Verification failed. Please try again.");
