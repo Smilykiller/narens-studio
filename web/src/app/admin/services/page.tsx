@@ -23,6 +23,7 @@ import {
   createService,
   updateService,
   deleteService,
+  seedSampleServices,
 } from "@/app/actions/services";
 
 const ICON_OPTIONS = [
@@ -50,6 +51,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
 export default function AdminServicesPage() {
   const [services, setServices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingService, setEditingService] = useState<any | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -147,6 +149,13 @@ export default function AdminServicesPage() {
     await loadServices();
   };
 
+  const handleSeedServices = async () => {
+    setSeeding(true);
+    await seedSampleServices(true);
+    await loadServices();
+    setSeeding(false);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -157,13 +166,23 @@ export default function AdminServicesPage() {
             Customize what appears on the public Services page. Reorder, edit pricing, or add new packages.
           </p>
         </div>
-        <button
-          onClick={openNewModal}
-          className="flex items-center gap-2 px-5 py-3 bg-sand-text text-sand-surface rounded-xl text-sm font-bold hover:bg-black/80 transition-colors shadow-md"
-        >
-          <Plus className="w-4 h-4" />
-          Add New Service
-        </button>
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={handleSeedServices}
+            disabled={seeding}
+            className="flex items-center gap-2 px-4 py-3 bg-sand-bg border border-sand-border text-sand-text rounded-xl text-sm font-bold hover:border-sand-text transition-colors"
+            title="Restore signature default services"
+          >
+            {seeding ? "Loading..." : "Load Sample Services"}
+          </button>
+          <button
+            onClick={openNewModal}
+            className="flex items-center gap-2 px-5 py-3 bg-sand-text text-sand-surface rounded-xl text-sm font-bold hover:bg-black/80 transition-colors shadow-md"
+          >
+            <Plus className="w-4 h-4" />
+            Add New Service
+          </button>
+        </div>
       </div>
 
       {/* List */}

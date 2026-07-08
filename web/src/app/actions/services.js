@@ -75,6 +75,25 @@ const DEFAULT_SERVICES = [
   },
 ];
 
+export async function seedSampleServices(force = false) {
+  try {
+    if (force) {
+      await prisma.service.deleteMany({});
+    }
+    const count = await prisma.service.count();
+    if (count === 0 || force) {
+      for (const s of DEFAULT_SERVICES) {
+        await prisma.service.create({ data: s });
+      }
+    }
+    revalidatePath("/services");
+    revalidatePath("/admin/services");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to seed sample services" };
+  }
+}
+
 export async function getServices({ includeInactive = false } = {}) {
   try {
     const count = await prisma.service.count();
