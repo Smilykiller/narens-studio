@@ -126,6 +126,8 @@ export default function AdminSettingsPage() {
                       if (result.success && result.image) {
                         setHeroImages([...heroImages, result.image]);
                       }
+                    } else if (data.error) {
+                      alert("Upload failed: " + data.error);
                     }
                     setSaving(false);
                   }} />
