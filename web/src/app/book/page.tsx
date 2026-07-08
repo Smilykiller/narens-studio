@@ -37,7 +37,7 @@ export default function BookingPage() {
         const data = await getPackages();
         
         // Map data to our local type and remove any pricing concept.
-        const activePackages: Package[] = data.map(p => ({
+        const activePackages: Package[] = data.map((p: any) => ({
           id: p.id,
           name: p.name,
           limits: p.limits
