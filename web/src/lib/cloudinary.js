@@ -1,13 +1,29 @@
-import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 
-// Cloudinary is configured automatically if CLOUDINARY_URL is in the environment
-// Format: cloudinary://my_key:my_secret@my_cloud_name
+function getCleanCloudinaryUrl() {
+  if (!process.env.CLOUDINARY_URL) return null;
+  let cleaned = process.env.CLOUDINARY_URL.trim();
+  // Strip out accidental "export CLOUDINARY_URL=" prefix from copying
+  if (cleaned.startsWith("export ")) {
+    cleaned = cleaned.replace(/^export\s+CLOUDINARY_URL=/i, "").trim();
+  }
+  cleaned = cleaned.replace(/^["']|["']$/g, ""); // remove surrounding quotes if any
+  if (!cleaned.startsWith("cloudinary://")) {
+    return null;
+  }
+  return cleaned;
+}
 
 export async function uploadImageBuffer(buffer, folder = "narensstudio") {
-  if (process.env.CLOUDINARY_URL) {
+  const cleanedUrl = getCleanCloudinaryUrl();
+  if (cleanedUrl) {
+    // Dynamically import cloudinary so it never evaluates during static Vercel builds!
+    const { v2: cloudinary } = await import("cloudinary");
+    cloudinary.config({
+      cloudinary_url: cleanedUrl,
+    });
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { folder },
